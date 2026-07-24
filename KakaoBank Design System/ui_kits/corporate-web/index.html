@@ -1,0 +1,161 @@
+<!doctype html>
+<!-- @dsCard group="UI Kit — Corporate Web" name="UI Kit · Corporate Web" subtitle="kakaobank.com — hero, services, AI, IR, footer" viewport="1400x900" -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>KakaoBank Corporate · UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  html, body { margin: 0; background: #FFFFFF; }
+  a, button { font-family: "Pretendard", system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="Components.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const { useState } = React;
+
+function App() {
+  const [subActive,  setSubActive]  = useState('biz');
+  const [tabActive,  setTabActive]  = useState('통장');
+
+  return (
+    <>
+      <TopNav active="home"/>
+      <SubNav
+        items={[
+          { id: 'biz',  label: '비즈니스' },
+          { id: 'tech', label: '기술' },
+          { id: 'news', label: '새소식' },
+        ]}
+        active={subActive}
+        onChange={setSubActive}
+      />
+      <Hero/>
+
+      {/* Service intro */}
+      <Section
+        eyebrow="SERVICES"
+        title="카카오뱅크의 서비스를 소개합니다"
+        bg={KB.white}
+        pad="40px 0 32px"
+      >
+        <p style={{ fontFamily: FONT, fontSize: 16, color: KB.gray, lineHeight: 1.7, maxWidth: 720, margin: 0 }}>
+          어렵고 복잡한 금융생활, 카카오뱅크 AI가 도와드릴게요. 통장부터 대출, 투자, 카드까지 — 일상에서 자주 쓰는 금융 서비스를 한 곳에서 만나보세요.
+        </p>
+      </Section>
+
+      <ServiceTabs active={tabActive} onChange={setTabActive}/>
+
+      {/* Service grid */}
+      <section style={{ background: KB.white, padding: '56px 0 120px' }}>
+        <div style={{ maxWidth: 1360, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+            <ServiceCard
+              accent={KB.yellow}
+              title="입출금통장"
+              blurb="수수료 없이 쓸 수 있는 카카오뱅크의 기본 통장이에요."
+            />
+            <ServiceCard
+              title="26주적금"
+              blurb="매주 자동으로 모으는 도전 적금. 캐릭터와 함께 26주 동안 함께 모아봐요."
+              badge="HOT"
+            />
+            <ServiceCard
+              title="세이프박스"
+              blurb="통장 속 비상금 보관함. 평소엔 잠겨있고 필요할 때 꺼내 써요."
+            />
+            <ServiceCard
+              title="모임통장"
+              blurb="회비, 여행비, 경조사비를 함께 관리. 누가 얼마 냈는지 한눈에."
+            />
+            <ServiceCard
+              title="mini"
+              blurb="만 14세부터 만들 수 있는 청소년 통장. 부모님과 함께 안전하게."
+            />
+            <ServiceCard
+              title="신용대출"
+              blurb="비대면으로 한도와 금리를 미리 확인. 서류 없이 빠르게 진행."
+            />
+            <ServiceCard
+              title="개인사업자통장"
+              blurb="매출과 경비를 자동 분류. 부가세박스로 세금 준비까지 함께."
+            />
+            <ServiceCard
+              title="외환"
+              blurb="환전 수수료 없이 달러·엔·유로 등 16개 통화를 손쉽게."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* AI section — section fill card pattern */}
+      <section style={{ background: KB.fill, padding: '120px 0' }}>
+        <div style={{ maxWidth: 1360, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ fontFamily: FONT, fontSize: 14, fontWeight: 700, color: KB.gray, letterSpacing: '0.04em', marginBottom: 16 }}>AI</div>
+          <h2 style={{ fontFamily: FONT, fontSize: 32, fontWeight: 700, lineHeight: 1.4, color: KB.black, margin: 0, letterSpacing: '-0.01em', maxWidth: 720 }}>
+            새로운 금융 경험, AI 서비스
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 20, marginTop: 48 }}>
+            <div style={{ background: KB.white, borderRadius: 12, padding: 32, minHeight: 280, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontFamily: FONT, fontSize: 12, fontWeight: 700, color: KB.gray, letterSpacing: '0.04em' }}>FEATURED</div>
+                <div style={{ fontFamily: FONT, fontSize: 28, fontWeight: 700, color: KB.black, marginTop: 12, letterSpacing: '-0.01em' }}>나에게 맞는 대출, AI가 먼저 알려드려요</div>
+                <p style={{ fontFamily: FONT, fontSize: 15, color: KB.gray, marginTop: 12, lineHeight: 1.6 }}>한도·금리·갈아타기 시점까지 — 매일 분석해서 알려주는 AI 금융 비서.</p>
+              </div>
+              <div style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 18px', borderRadius: 12, background: KB.black, color: KB.white, fontFamily: FONT, fontSize: 14, fontWeight: 600 }}>
+                자세히 보기
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </div>
+            </div>
+            <div style={{ background: KB.white, borderRadius: 12, padding: 28 }}>
+              <div style={{ fontFamily: FONT, fontSize: 20, fontWeight: 700, color: KB.black }}>AI 환율 알림</div>
+              <p style={{ fontFamily: FONT, fontSize: 14, color: KB.gray, marginTop: 10, lineHeight: 1.5 }}>설정한 환율에 도달하면 바로 알림.</p>
+            </div>
+            <div style={{ background: KB.white, borderRadius: 12, padding: 28 }}>
+              <div style={{ fontFamily: FONT, fontSize: 20, fontWeight: 700, color: KB.black }}>AI 가계부</div>
+              <p style={{ fontFamily: FONT, fontSize: 14, color: KB.gray, marginTop: 10, lineHeight: 1.5 }}>거래 내역을 카테고리별로 자동 분류.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* IR strip */}
+      <Section
+        eyebrow="INVESTORS"
+        title="투자자 여러분과 함께 성장하고 있어요"
+        bg={KB.white}
+        pad="120px 0"
+      >
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
+          {[
+            ['KOSPI 323410', '상장 종목 코드'],
+            ['2017-07-27',   '서비스 출시'],
+            ['23M+',         '누적 가입 고객'],
+            ['44.5조',       'FY24 대출잔액'],
+          ].map(([n,l]) => (
+            <div key={l}>
+              <div style={{ fontFamily: FONT, fontSize: 32, fontWeight: 800, color: KB.black, letterSpacing: '-0.02em' }}>{n}</div>
+              <div style={{ fontFamily: FONT, fontSize: 14, color: KB.gray, marginTop: 8 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Footer/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

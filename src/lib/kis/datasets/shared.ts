@@ -1,0 +1,47 @@
+// 데이터셋 수집기 공통 타입·헬퍼. 각 데이터셋: fetch(KIS) → map → 멱등 upsert.
+
+export type DatasetResult = "ok" | "unavailable";
+
+export interface StockDataset {
+  key: string;
+  run(code: string): Promise<DatasetResult>;
+}
+
+export interface MarketDataset {
+  key: string;
+  run(): Promise<DatasetResult>;
+}
+
+// 시장 전역 행의 ingest_state.code 값.
+export const MARKET_CODE = "_MARKET_";
+
+// 배치 내 PK 중복 제거. 같은 충돌키가 2행이면 Postgres upsert가
+// "ON CONFLICT DO UPDATE cannot affect row a second time"로 실패 → 마지막 값만 남긴다.
+export function dedupeByKey<T>(rows: T[], keyFn: (r: T) => string): T[] {
+  const m = new Map<string, T>();
+  for (const r of rows) m.set(keyFn(r), r);
+  return [...m.values()];
+}
+
+// KIS 문자열 숫자 → number | null (빈 문자열·null·NaN → null).
+export function num(v: unknown): number | null {
+  if (v === "" || v == null) return null;
+  const n = Number(v);
+  return Number.isNaN(n) ? null : n;
+}
+
+// 'YYYYMMDD' → 'YYYY-MM-DD' (date 컬럼용). 유효하지 않으면 null.
+export function toDate(yyyymmdd: unknown): string | null {
+  const s = String(yyyymmdd ?? "").trim();
+  if (!/^\d{8}$/.test(s)) return null;
+  return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+}
+
+// data_dt('YYYYMMDD') + data_tm('HHMMSS') → ISO timestamptz | null (KST +09:00).
+export function toTimestamp(dt: unknown, tm: unknown): string | null {
+  const d = String(dt ?? "").trim();
+  if (!/^\d{8}$/.test(d)) return null;
+  const t = String(tm ?? "").trim().padStart(6, "0").slice(0, 6);
+  const hh = /^\d{6}$/.test(t) ? t : "000000";
+  return `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}T${hh.slice(0, 2)}:${hh.slice(2, 4)}:${hh.slice(4, 6)}+09:00`;
+}

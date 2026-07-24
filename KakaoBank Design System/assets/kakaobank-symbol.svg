@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="KakaoBank symbol">
+  
+  <rect width="120" height="120" rx="28" fill="#FFE300"></rect>
+  <g fill="#1E1E1E">
+    
+    <path d="M36 28 H64 a18 18 0 0 1 18 18 v0 a14 14 0 0 1 -8 12.6 a16 16 0 0 1 10 14.9 v0 a18 18 0 0 1 -18 18 H36 Z M50 42 v14 h14 a7 7 0 0 0 0 -14 Z M50 64 v14 h18 a7 7 0 0 0 0 -14 Z"></path>
+    
+    <rect x="56" y="50" width="8" height="20" rx="2" fill="#FFE300"></rect>
+  </g>
+</svg>

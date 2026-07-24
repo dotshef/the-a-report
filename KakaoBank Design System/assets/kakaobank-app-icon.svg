@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="KakaoBank app icon">
+  
+  <rect width="120" height="120" rx="28" fill="#FFE300"></rect>
+  <g transform="translate(30 24)">
+    <path d="M6 4 H34 a14 14 0 0 1 14 14 v0 a11 11 0 0 1 -6 9.8 a12 12 0 0 1 8 11.2 v0 a14 14 0 0 1 -14 14 H6 Z M18 16 v10 h14 a5 5 0 0 0 0 -10 Z M18 34 v10 h18 a5 5 0 0 0 0 -10 Z" fill="#1E1E1E"></path>
+    <rect x="24" y="22" width="6" height="14" rx="1.4" fill="#FFE300"></rect>
+  </g>
+</svg>

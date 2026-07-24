@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/* ============================================================
+   KakaoBank Design System tokens
+   Ported from: KakaoBank Design System/colors_and_type.css
+   The one yellow: #FFE300 (no tints/shades). Near-black: #1E1E1E.
+   ============================================================ */
+:root {
+  /* Brand */
+  --kb-yellow: #ffe300; /* PANTONE Yellow 012 C/U — ONLY brand yellow */
+  --kb-black: #1e1e1e; /* near-black — Kakao family */
+  --kb-white: #ffffff;
+
+  /* Neutrals */
+  --kb-gray: #a3a3a3;
+  --kb-light-gray: #cccccc;
+  --kb-cool-gray: #888888;
+  --kb-surface-fill: #f7f7f7;
+  --kb-surface-subtle: #f9f9f9;
+  --kb-border-subtle: #e6e6e6;
+
+  /* Semantic */
+  --kb-critical: #e02000;
+  --kb-positive: #0fbe6c;
+  --kb-link-blue: #007aff;
+  --kb-warning: #ff9800;
+
+  /* Price direction (KR convention: 상승=red, 하락=blue).
+     Separate tokens so we never repurpose --kb-critical(error)/--kb-link(link). */
+  --price-up: #e02000;
+  --price-down: #2e6bd6;
+
+  /* Foreground roles */
+  --fg-1: var(--kb-black);
+  --fg-2: var(--kb-gray);
+  --fg-3: var(--kb-cool-gray);
+  --fg-inverse: var(--kb-white);
+
+  /* Background roles */
+  --bg-page: var(--kb-white);
+  --bg-surface: var(--kb-white);
+  --bg-fill: var(--kb-surface-fill);
+  --bg-subtle: var(--kb-surface-subtle);
+
+  /* Borders */
+  --border-default: var(--kb-light-gray);
+  --border-subtle: var(--kb-border-subtle);
+  --overlay-scrim: rgba(0, 0, 0, 0.4);
+
+  /* Radius */
+  --radius-tight: 8px;
+  --radius-default: 12px;
+  --radius-comfort: 16px;
+  --radius-sheet: 20px;
+  --radius-pill: 9999px;
+
+  /* Elevation */
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-3: 0 -2px 16px rgba(0, 0, 0, 0.08);
+
+  /* Motion */
+  --motion-fast: 150ms;
+  --motion-standard: 250ms;
+  --motion-success: 350ms;
+  --motion-page: 300ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --content-max: 1360px;
+  --mobile-gutter: 20px;
+  --header-h: 62px;
+}
+
+/* Expose tokens as Tailwind theme utilities (Tailwind v4 @theme) */
+@theme inline {
+  --color-kb-yellow: var(--kb-yellow);
+  --color-kb-black: var(--kb-black);
+  --color-kb-white: var(--kb-white);
+  --color-kb-gray: var(--kb-gray);
+  --color-kb-light-gray: var(--kb-light-gray);
+  --color-kb-cool-gray: var(--kb-cool-gray);
+  --color-kb-fill: var(--kb-surface-fill);
+  --color-kb-subtle: var(--kb-surface-subtle);
+  --color-kb-border: var(--kb-border-subtle);
+  --color-kb-critical: var(--kb-critical);
+  --color-kb-positive: var(--kb-positive);
+  --color-kb-link: var(--kb-link-blue);
+  --color-price-up: var(--price-up);
+  --color-price-down: var(--price-down);
+
+  --font-sans: var(--font-pretendard), system-ui, -apple-system, "Apple SD Gothic Neo",
+    "Noto Sans KR", sans-serif;
+
+  --radius-tight: 8px;
+  --radius-default: 12px;
+  --radius-comfort: 16px;
+  --radius-sheet: 20px;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Banking amounts — tabular figures */
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.amount--negative {
+  color: var(--kb-critical);
+}
+.amount--positive {
+  color: var(--kb-positive);
+}
+
+/* Masking: blur the sensitive conclusion/analysis (PRD: 마스킹) */
+.kb-mask {
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-standard: 0ms;
+    --motion-success: 0ms;
+    --motion-page: 0ms;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

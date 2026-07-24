@@ -1,0 +1,267 @@
+/* ============================================================
+   KakaoBank Design System — colors_and_type.css
+   ============================================================
+   Source: KakaoBank Brand Identity Guidelines V2.0 (Aug 2024),
+   plus live DOM verification at kakaobank.com / view/service.
+   ============================================================ */
+
+/* ---------- Pretendard (local OTF, weights 100–900) ---------- */
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-ExtraLight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-ExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("fonts/Pretendard-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Brand */
+  --kb-yellow:        #FFE300;   /* PANTONE Yellow 012 C/U — ONLY brand yellow */
+  --kb-black:         #1E1E1E;   /* near-black — Kakao family */
+  --kb-white:         #FFFFFF;
+
+  /* Neutrals (V2.0 guideline) */
+  --kb-gray:          #A3A3A3;   /* PANTONE Cool Gray 6 */
+  --kb-light-gray:    #CCCCCC;   /* PANTONE Cool Gray 3 */
+  --kb-cool-gray:     #888888;   /* inactive sub-nav */
+  --kb-surface-fill:  #F7F7F7;
+  --kb-surface-subtle:#F9F9F9;
+  --kb-border-subtle: #E6E6E6;
+
+  /* Semantic */
+  --kb-critical:      #E02000;
+  --kb-positive:      #0FBE6C;
+  --kb-link-blue:     #007AFF;
+  --kb-warning:       #FF9800;
+
+  /* Foreground roles */
+  --fg-1:             var(--kb-black);     /* headings, body, account names */
+  --fg-2:             var(--kb-gray);      /* captions, secondary text */
+  --fg-3:             var(--kb-cool-gray); /* inactive nav */
+  --fg-inverse:       var(--kb-white);
+
+  /* Background roles */
+  --bg-page:          var(--kb-white);
+  --bg-surface:       var(--kb-white);
+  --bg-fill:          var(--kb-surface-fill);
+  --bg-subtle:        var(--kb-surface-subtle);
+
+  /* Borders */
+  --border-default:   var(--kb-light-gray);
+  --border-subtle:    var(--kb-border-subtle);
+  --overlay-scrim:    rgba(0, 0, 0, 0.4);
+
+  /* Type */
+  --font-sans: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto,
+               "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+
+  /* Type scale (verified at kakaobank.com) */
+  --fs-hero-mega:     90px;
+  --fs-display:       42px;
+  --fs-section:       32px;
+  --fs-heading:       20px;
+  --fs-title:         18px;
+  --fs-body-lg:       16px;
+  --fs-body:          14px;
+  --fs-caption:       13px;
+  --fs-micro:         12px;
+
+  /* Weights */
+  --fw-regular:       400;
+  --fw-medium:        500;
+  --fw-semibold:      600;
+  --fw-bold:          700;
+  --fw-extrabold:     800;
+
+  /* Line heights (Korean-tuned) */
+  --lh-tight:         1.1;
+  --lh-snug:          1.25;
+  --lh-normal:        1.4;
+  --lh-relaxed:       1.55;
+
+  /* Spacing (4px base) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Radius */
+  --radius-tight:    8px;   /* small chips */
+  --radius-default: 12px;   /* THE radius — buttons, cards, inputs, avatars */
+  --radius-comfort: 16px;   /* section fill cards, debit card visualization */
+  --radius-sheet:   20px;   /* bottom sheet top corners */
+  --radius-pill:  9999px;   /* badges, dots, segmented inactive */
+
+  /* Elevation */
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.04);   /* whisper */
+  --shadow-2: 0 2px 8px rgba(0,0,0,0.06);   /* subtle — FAB, tooltip */
+  --shadow-3: 0 -2px 16px rgba(0,0,0,0.08); /* sheets, modals */
+
+  /* Motion */
+  --motion-instant:   0ms;
+  --motion-fast:    150ms;
+  --motion-standard:250ms;
+  --motion-success: 350ms;
+  --motion-page:    300ms;
+  --ease-enter:     cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-exit:      cubic-bezier(0.4, 0.0, 1.0, 1);
+  --ease-standard:  cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  /* Layout */
+  --content-max: 1360px;
+  --mobile-gutter: 20px;
+  --header-h: 62px;
+}
+
+/* ---------- Semantic element styles ---------- */
+html, body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1 {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+  color: var(--fg-1);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+h3 {
+  font-size: var(--fs-heading);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+h4 {
+  font-size: var(--fs-title);
+  font-weight: var(--fw-semibold);
+  line-height: 1.44;
+  color: var(--fg-1);
+  margin: 0;
+}
+p, body {
+  font-size: var(--fs-body-lg);
+  font-weight: var(--fw-regular);
+  line-height: 1.5;
+  color: var(--fg-1);
+}
+small, .caption {
+  font-size: var(--fs-caption);
+  color: var(--fg-2);
+  line-height: var(--lh-relaxed);
+}
+.micro {
+  font-size: var(--fs-micro);
+  color: var(--fg-2);
+  line-height: 1.5;
+}
+
+/* Hero mega — the 90px confidence moment */
+.hero-mega {
+  font-size: var(--fs-hero-mega);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  color: var(--fg-1);
+}
+
+/* Numerals — banking amounts */
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-bold);
+  color: var(--fg-1);
+}
+.amount--negative { color: var(--kb-critical); }
+
+/* Utility */
+.kb-symbol-bg { background: var(--kb-yellow); color: var(--kb-black); }
+.kb-text-secondary { color: var(--fg-2); }
+.kb-text-inactive { color: var(--fg-3); }
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-standard: 0ms;
+    --motion-success: 0ms;
+    --motion-page: 0ms;
+  }
+}
