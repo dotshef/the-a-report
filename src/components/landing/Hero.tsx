@@ -12,20 +12,16 @@ export function Hero() {
       </div>
 
       <h1 className="text-[32px] font-extrabold leading-[1.2] tracking-[-0.02em]">
-        궁금한 종목,
-        <br />
-        오늘 저녁 리포트로
+        궁금한 그 종목,
         <br />
         <span className="bg-[linear-gradient(to_top,var(--kb-yellow)_0,var(--kb-yellow)_34%,transparent_34%)] px-0.5">
-          무료로
-        </span>{" "}
-        받아보세요
+          무료 분석 리포트
+        </span>
+        로 확인하세요
       </h1>
 
       <p className="text-base leading-relaxed text-kb-gray">
-        코스피·코스닥 2,651개 종목의 시세와 AI 리포트를
-        <br />
-        매일 저녁 문자로 보내드려요.
+        국내 상장 전 종목 검색 가능 · 선택 즉시 리포트 미리보기 제공
       </p>
     </header>
   );

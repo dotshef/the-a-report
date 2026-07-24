@@ -1,5 +1,3 @@
-import { Hero } from "@/components/landing/Hero";
-import { StatsBar } from "@/components/landing/StatsBar";
 import { LandingClient } from "@/components/landing/LandingClient";
 import { getTrending } from "@/data/loader";
 import { getStats } from "@/lib/stats";
@@ -14,10 +12,8 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col gap-8 bg-white pb-16">
-      <Hero />
-      <StatsBar stats={stats} />
-      <LandingClient trending={trending} />
+    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col gap-8 bg-white pb-16 shadow-[0_0_60px_rgba(0,0,0,0.06)]">
+      <LandingClient trending={trending} stats={stats} />
 
       <footer className="mt-4 flex flex-col gap-3 px-5 text-xs leading-relaxed text-kb-gray">
         <div className="rounded-[12px] bg-kb-fill p-4">
@@ -30,15 +26,15 @@ export default async function Home() {
           <p className="mt-2">
             <span className="font-semibold text-kb-black">[개인정보 수집·이용]</span> 수집항목:
             이름·전화번호·관심종목 / 목적: 리포트 발송 및 투자정보 안내 / 보유기간: 수집일로부터
-            [○년] 또는 동의 철회 시까지. 동의를 거부할 수 있으며 거부 시 신청이 제한됩니다.
+            1년 또는 동의 철회 시까지. 동의를 거부할 수 있으며 거부 시 신청이 제한됩니다.
           </p>
         </div>
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           <span>
-            <span className="font-semibold text-kb-black">상호</span> [업체명]
+            <span className="font-semibold text-kb-black">상호</span> 에이주식 연구소
           </span>
           <span>
-            <span className="font-semibold text-kb-black">대표</span> [대표자명]
+            <span className="font-semibold text-kb-black">대표</span> 박지환
           </span>
           <span>
             <span className="font-semibold text-kb-black">유사투자자문업 신고</span> [제0000-00호]
@@ -50,7 +46,6 @@ export default async function Home() {
             <span className="font-semibold text-kb-black">문의</span> [1600-0000]
           </span>
         </div>
-        <p className="text-kb-light-gray">시세 데이터: 한국투자증권 API</p>
       </footer>
     </main>
   );

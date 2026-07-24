@@ -5,7 +5,6 @@ import { marketLabel } from "@/data/stock";
 import { won, signed, pct } from "@/lib/format";
 import { Card, StatusPill } from "@/components/design-system/primitives";
 import { Icon } from "@/components/design-system/Icon";
-import { Button } from "@/components/design-system/Button";
 import { PriceChart } from "./PriceChart";
 
 function Stat({ label, value }: { label: string; value: string }) {
@@ -17,13 +16,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function ReportPreview({
-  report,
-  onApply,
-}: {
-  report: ReportData;
-  onApply: () => void;
-}) {
+export function ReportPreview({ report }: { report: ReportData }) {
   const { stock, quote, sections } = report;
   const up = quote.change > 0;
 
@@ -120,10 +113,6 @@ export function ReportPreview({
           )}
         </Card>
       ))}
-
-      <Button fullWidth onClick={onApply}>
-        지금 무료로 전체 리포트 받기
-      </Button>
     </div>
   );
 }

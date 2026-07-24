@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 에이주식연구소 랜딩페이지
 
-## Getting Started
+코스피·코스닥 2,651개 종목의 주가와 AI 리포트를 검색하고, 매일 무료 리포트를 신청받는 모바일 친화형 랜딩페이지입니다. **KakaoBank 디자인 시스템** 토큰을 기반으로 합니다.
 
-First, run the development server:
+## 기술 스택
+
+- **Next.js 16** (App Router) / **React 19** / **TypeScript**
+- **Tailwind CSS v4**
+- **Supabase** — 데이터 저장 (서버 서비스롤 전용, RLS 미사용 v1)
+- **한국투자증권(KIS) API** — 주가·투자의견·뉴스 수집
+- **Vercel Cron** — 야간 데이터 적재
+- **Resend** — 리드 알림 메일 / **SMS 게이트웨이** — 휴대폰 인증
+
+## 실행
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+빌드:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build && npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 데이터 흐름
 
-## Learn More
+```
+KIS API → Vercel Cron(/api/cron/ingest) → Supabase → 클라이언트(항상 DB만 읽음)
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 참고사항
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 리포트 신청 고객 정보(리드)는 Supabase `report_request` 테이블에 저장되며, Resend로 알림 메일이 발송됩니다.
+- 휴대폰 인증 요청은 `phone_verification` 테이블에 저장됩니다. 평문 코드는 저장하지 않고 SHA-256 해시(`code_hash`)만 보관합니다.
+- 리포트 제목·분류는 DB가 아니라 코드에 임베딩되어 있습니다 (`src/data/report-titles.ts`, 업데이트 X).
+- "한 줄 결론"과 분석 결과는 마스킹 처리됩니다.

@@ -6,6 +6,7 @@ import { submitLead, type LeadState } from "@/app/actions/lead";
 import { formatPhone } from "@/lib/phone";
 import { Button } from "@/components/design-system/Button";
 import { Icon } from "@/components/design-system/Icon";
+import { Avatar } from "@/components/design-system/primitives";
 
 const initial: LeadState = { ok: false, message: "" };
 
@@ -44,7 +45,7 @@ function SubmitButton({ canSubmit }: { canSubmit: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" fullWidth disabled={pending || !canSubmit}>
-      {pending ? "신청 중…" : "무료 리포트 신청하기"}
+      {pending ? "신청 중…" : "무료 리포트 신청 완료하기"}
     </Button>
   );
 }
@@ -53,9 +54,11 @@ function SubmitButton({ canSubmit }: { canSubmit: boolean }) {
 export function LeadForm({
   selectedCode,
   selectedName,
+  onBack,
 }: {
   selectedCode?: string;
   selectedName?: string;
+  onBack?: () => void;
 }) {
   const [state, formAction] = useActionState(submitLead, initial);
   const [tracking, setTracking] = useState<Tracking | null>(null);
@@ -140,44 +143,75 @@ export function LeadForm({
   return (
     <section id="apply" className="scroll-mt-6 px-5">
       <div className="flex flex-col gap-4 rounded-[16px] bg-kb-fill p-6">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-bold">무료 리포트 신청</h2>
-          <p className="text-sm text-kb-gray">
-            {selectedName
-              ? `${selectedName} 리포트를 오늘 저녁에 보내드릴게요.`
-              : "관심 종목 리포트를 오늘 저녁에 보내드릴게요."}
-          </p>
-        </div>
+        <h2 className="text-xl font-bold leading-snug">
+          리포트를 받으실{" "}
+          <span className="bg-[linear-gradient(to_top,var(--kb-yellow)_0,var(--kb-yellow)_34%,transparent_34%)] px-0.5">
+            정보를 입력
+          </span>
+          하세요
+        </h2>
 
-        <div className="flex flex-col gap-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="이름"
-            className={inputCls}
-            aria-label="이름"
-          />
-
-          {/* 휴대폰 + 인증번호 받기 */}
-          <div className="flex gap-2">
-            <input
-              value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))}
-              inputMode="tel"
-              placeholder="휴대폰 번호"
-              className={inputCls}
-              aria-label="휴대폰 번호"
-              readOnly={verified}
-            />
-            <Button
+        {/* 선택 종목 카드 (레퍼런스 STEP2 selected) */}
+        {selectedName && (
+          <div className="flex items-center gap-3 rounded-[12px] border border-kb-border bg-kb-white p-3">
+            <Avatar size={40}>
+              <span className="text-base font-bold text-kb-black">{selectedName.slice(0, 1)}</span>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="text-base font-bold">{selectedName}</span>
+              <span className="text-xs text-kb-gray">
+                {selectedCode ? `${selectedCode} · ` : ""}분석 리포트
+              </span>
+            </div>
+            <button
               type="button"
-              variant="outline"
-              onClick={sendCode}
-              disabled={busy || verified || name.trim().length < 1 || phone.length < 12}
-              className="shrink-0 whitespace-nowrap"
+              onClick={onBack}
+              className="ml-auto text-xs text-kb-gray underline underline-offset-2"
             >
-              {step === "idle" ? "인증번호 받기" : "재발송"}
-            </Button>
+              변경
+            </button>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="lead-name" className="text-sm font-semibold">
+              이름
+            </label>
+            <input
+              id="lead-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="홍길동"
+              className={inputCls}
+            />
+          </div>
+
+          {/* 전화번호 + 인증번호 받기 */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="lead-phone" className="text-sm font-semibold">
+              전화번호
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="lead-phone"
+                value={phone}
+                onChange={(e) => setPhone(formatPhone(e.target.value))}
+                inputMode="tel"
+                placeholder="010-1234-5678"
+                className={inputCls}
+                readOnly={verified}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={sendCode}
+                disabled={busy || verified || name.trim().length < 1 || phone.length < 12}
+                className="shrink-0 whitespace-nowrap"
+              >
+                {step === "idle" ? "인증번호 받기" : "재발송"}
+              </Button>
+            </div>
           </div>
 
           {/* 인증번호 입력 + 확인 */}
@@ -261,6 +295,16 @@ export function LeadForm({
           <SubmitButton canSubmit={verified && agreePrivacy} />
         </form>
       </div>
+
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="mt-4 inline-flex items-center gap-1 text-sm text-kb-gray"
+        >
+          ← 종목 다시 선택
+        </button>
+      )}
     </section>
   );
 }

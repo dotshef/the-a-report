@@ -41,6 +41,8 @@
   --bg-surface: var(--kb-white);
   --bg-fill: var(--kb-surface-fill);
   --bg-subtle: var(--kb-surface-subtle);
+  /* 모바일 레이아웃 바깥(데스크톱 여백) 백드롭 — 중립 그레이 톤 */
+  --bg-backdrop: linear-gradient(180deg, #f7f8fa, #eceef2);
 
   /* Borders */
   --border-default: var(--kb-light-gray);
@@ -103,7 +105,7 @@ html,
 body {
   font-family: var(--font-sans);
   color: var(--fg-1);
-  background: var(--bg-page);
+  background: var(--bg-backdrop);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
