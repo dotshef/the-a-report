@@ -3,15 +3,23 @@
 import type { ReportData } from "@/lib/types";
 import { marketLabel } from "@/data/stock";
 import { won, signed, pct } from "@/lib/format";
-import { Card, StatusPill } from "@/components/design-system/primitives";
+import { Card } from "@/components/design-system/primitives";
 import { Icon } from "@/components/design-system/Icon";
 import { PriceChart } from "./PriceChart";
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  valueClassName = "",
+}: {
+  label: string;
+  value: string;
+  valueClassName?: string;
+}) {
   return (
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-kb-gray">{label}</span>
-      <span className="amount text-sm">{value}</span>
+      <span className={`amount text-sm ${valueClassName}`}>{value}</span>
     </div>
   );
 }
@@ -68,30 +76,49 @@ export function ReportPreview({ report }: { report: ReportData }) {
 
         {/* 고가/저가/52주 */}
         <div className="grid grid-cols-4 gap-2 p-5 pt-3">
-          <Stat label="고가" value={won(quote.high)} />
-          <Stat label="저가" value={won(quote.low)} />
+          <Stat label="고가" value={won(quote.high)} valueClassName="text-price-up" />
+          <Stat label="저가" value={won(quote.low)} valueClassName="text-price-down" />
           <Stat label="52주 최고" value={won(quote.high52w)} />
           <Stat label="52주 최저" value={won(quote.low52w)} />
         </div>
       </Card>
 
-      {/* ── 리포트 하단: 제목/분류 + 마스킹 결론·분석 + 뉴스 ── */}
+      {/* ── 리포트 하단: 분류/제목 + 마스킹 결론·분석 + 뉴스 ── */}
       {sections.map((s, i) => (
         <Card key={i} className="flex flex-col gap-3">
-          <div className="flex items-start justify-between gap-3">
+          {/* 분류 뱃지 — 제목 위, 금색 텍스트, 배경/테두리 없음 */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-bold text-kb-gold">{s.category}</span>
             <h4 className="text-base font-semibold leading-snug">{s.title}</h4>
-            <StatusPill tone="neutral">{s.category}</StatusPill>
           </div>
 
-          {/* 한 줄 결론 / 분석 결과 — 마스킹 (PRD L22) */}
-          <div className="relative overflow-hidden rounded-[12px] bg-kb-subtle p-4">
-            <p className="kb-mask text-sm leading-relaxed">{s.conclusion}</p>
-            <p className="kb-mask mt-2 text-sm leading-relaxed text-kb-gray">{s.analysis}</p>
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-white/40">
-              <Icon name="lock" size={20} color="var(--kb-gray)" />
-              <span className="text-xs font-semibold text-kb-gray">
-                한 줄 결론과 분석은 신청 후 공개돼요
-              </span>
+          {/* 한 줄 결론 — 마스킹 (PRD L22) */}
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold text-kb-black"
+              style={{ background: "var(--kb-yellow-signal)" }}
+            >
+              한줄 결론
+            </span>
+            <div className="relative flex-1 overflow-hidden rounded-[8px] bg-kb-subtle px-3 py-2">
+              <p className="kb-mask truncate text-sm leading-relaxed">{s.conclusion}</p>
+              <div className="absolute inset-0 flex items-center justify-center bg-white/40">
+                <Icon name="lock" size={16} color="var(--kb-gray)" />
+              </div>
+            </div>
+          </div>
+
+          {/* 분석 결과 (요약) — 마스킹 (PRD L22) */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-semibold text-kb-gray">분석 결과 (요약)</span>
+            <div className="relative overflow-hidden rounded-[12px] bg-kb-subtle p-4">
+              <p className="kb-mask text-sm leading-relaxed text-kb-gray">{s.analysis}</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-white/40">
+                <Icon name="lock" size={20} color="var(--kb-gray)" />
+                <span className="text-xs font-semibold text-kb-gray">
+                  신청 후 공개돼요
+                </span>
+              </div>
             </div>
           </div>
 

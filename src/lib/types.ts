@@ -51,5 +51,4 @@ export interface TrendingStock {
   /** 투자의견 (KIS: 매수/중립 등) */
   opinion: string;
   price: number;
-  changeRate: number;
 }

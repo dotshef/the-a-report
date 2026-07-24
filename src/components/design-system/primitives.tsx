@@ -60,11 +60,11 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={[
-        "inline-flex items-center gap-1.5 rounded-[8px] px-3.5 py-2 text-sm font-semibold",
-        "transition-colors duration-150",
+        "inline-flex cursor-pointer items-center gap-1.5 rounded-[8px] px-3.5 py-2 text-sm font-semibold",
+        "border-2 transition-all duration-300 ease-out hover:-translate-y-0.5",
         active
-          ? "bg-kb-black text-kb-white"
-          : "bg-kb-fill text-kb-black hover:bg-kb-border",
+          ? "border-kb-black bg-kb-black text-kb-white"
+          : "border-transparent bg-kb-fill text-kb-black hover:border-kb-gold hover:text-kb-gold",
       ].join(" ")}
     >
       {children}

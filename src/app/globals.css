@@ -3,11 +3,14 @@
 /* ============================================================
    KakaoBank Design System tokens
    Ported from: KakaoBank Design System/colors_and_type.css
-   The one yellow: #FFE300 (no tints/shades). Near-black: #1E1E1E.
+   Brand primary: gold (#D4AF37). Near-black: #1E1E1E.
    ============================================================ */
 :root {
   /* Brand */
-  --kb-yellow: #ffe300; /* PANTONE Yellow 012 C/U — ONLY brand yellow */
+  --kb-gold: #d4af37; /* metallic gold — brand primary */
+  --kb-gold-soft: #e8cf7e; /* lighter gold — hover borders / accents */
+  --kb-yellow: var(--kb-gold); /* alias: legacy token name, now gold */
+  --kb-yellow-signal: #ffe300; /* PANTONE Yellow 012 — KakaoBank brand yellow (highlight/accent) */
   --kb-black: #1e1e1e; /* near-black — Kakao family */
   --kb-white: #ffffff;
 
@@ -77,7 +80,10 @@
 
 /* Expose tokens as Tailwind theme utilities (Tailwind v4 @theme) */
 @theme inline {
+  --color-kb-gold: var(--kb-gold);
+  --color-kb-gold-soft: var(--kb-gold-soft);
   --color-kb-yellow: var(--kb-yellow);
+  --color-kb-yellow-signal: var(--kb-yellow-signal);
   --color-kb-black: var(--kb-black);
   --color-kb-white: var(--kb-white);
   --color-kb-gray: var(--kb-gray);
@@ -128,6 +134,62 @@ body {
   filter: blur(6px);
   user-select: none;
   pointer-events: none;
+}
+
+/* Modal / bottom-sheet entrance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sheetUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Skeleton shimmer — 로딩 중 리포트 자리표시자 (좌→우 광택 스윕) */
+@keyframes kb-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.kb-skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--kb-surface-fill) 30%,
+    var(--kb-border-subtle) 50%,
+    var(--kb-surface-fill) 70%
+  );
+  background-size: 200% 100%;
+  animation: kb-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-tight);
+}
+
+/* Content reveal — 분석 내용이 렌더링될 때 살짝 떠오르는 등장 모션 */
+@keyframes kb-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.kb-reveal {
+  animation: kb-reveal var(--motion-page) var(--ease-standard) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

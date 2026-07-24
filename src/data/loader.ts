@@ -145,7 +145,7 @@ export async function getTrending(limit = 8): Promise<TrendingStock[]> {
           .select("close, date")
           .eq("code", code)
           .order("date", { ascending: false })
-          .limit(2)
+          .limit(1)
           .then((r) => ({ code, closes: (r.data ?? []).map((x) => n(x.close)) })),
       ),
     ),
@@ -170,12 +170,10 @@ export async function getTrending(limit = 8): Promise<TrendingStock[]> {
     if (!stock) continue;
     const closes = closesByCode.get(code) ?? [];
     const price = closes[0] ?? 0;
-    const prev = closes[1] ?? price;
     out.push({
       stock,
       opinion: opinionByCode.get(code) ?? "중립",
       price,
-      changeRate: prev ? Number((((price - prev) / prev) * 100).toFixed(2)) : 0,
     });
   }
   return out;
