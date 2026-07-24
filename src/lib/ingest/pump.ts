@@ -5,9 +5,13 @@ import { MARKET_CODE, type DatasetResult } from "@/lib/kis/datasets/shared";
 import { renewLock } from "./lock";
 import { ALL_MARKER, isMarketDatasetFresh, selectStaleStocks } from "./cursor";
 
-// 단일 Cron 펌프. 청크(150종목)를 순차 수집 → 멱등 upsert → ingest_state 갱신.
+// 단일 Cron 펌프. 청크(150종목)를 동시 수집 → 멱등 upsert → ingest_state 갱신.
 export const CHUNK_SIZE = 150;
 const TIME_BUDGET_MS = 700_000; // maxDuration=800s 대비 여유
+// 공유 레이트리미터(KIS 12req/s)를 실제로 포화시키기 위한 동시 워커 수.
+// 호출당 왕복 ~0.8s이라 요청 1개씩 순차로는 ~0.8req/s밖에 안 나온다.
+// 워커를 겹쳐 두면 리미터가 84ms 간격으로 흘려보내 ~12req/s를 채운다.
+const CONCURRENCY = 16;
 
 interface BatchArgs {
   lockName: string;
@@ -83,12 +87,18 @@ export async function runBatch({ lockName, owner, lockTtlMs }: BatchArgs) {
 
   const codes = await selectStaleStocks(CHUNK_SIZE);
   let processed = 0;
-  for (const code of codes) {
-    if (Date.now() - start > TIME_BUDGET_MS) break;
-    await processStock(code, stats);
-    processed++;
-    await renewLock(lockName, owner, lockTtlMs);
+  let cursor = 0;
+  // 동시 워커 풀: 각 워커가 커서로 다음 종목을 집어 처리 → 항상 CONCURRENCY개가 in-flight.
+  async function worker(): Promise<void> {
+    while (Date.now() - start <= TIME_BUDGET_MS) {
+      const i = cursor++;
+      if (i >= codes.length) return;
+      await processStock(codes[i], stats);
+      processed++;
+      await renewLock(lockName, owner, lockTtlMs);
+    }
   }
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, codes.length) }, worker));
 
   const elapsedMs = Date.now() - start;
   const summary = { processed, selected: codes.length, elapsedMs, stats };

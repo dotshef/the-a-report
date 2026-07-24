@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { acquireLock, releaseLock } from "@/lib/ingest/lock";
 import { runBatch } from "@/lib/ingest/pump";
 
-// 단일 Cron 펌프 엔드포인트. Vercel Cron이 매일 정오(KST, 03:00 UTC)부터
-// 한 시간 창에서 5분 간격으로 호출 → 유니버스 한 바퀴 돌면 자동 no-op.
+// 단일 Cron 펌프 엔드포인트. Vercel Cron이 매일 정오(KST, 03:00~04:55 UTC)
+// 2시간 창에서 5분 간격 호출. 동시 워커로 KIS 12req/s 포화 → 1회당 150종목 ~40s.
+// 2,700종목 한 바퀴 ~19회(=약 1.5h). 다 돌면 12h 신선도로 남은 호출은 자동 no-op.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 800; // Pro

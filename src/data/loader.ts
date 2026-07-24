@@ -136,13 +136,19 @@ export async function getTrending(limit = 8): Promise<TrendingStock[]> {
   const picks = codes.filter((c) => opinionByCode.has(c)).slice(0, limit);
   if (picks.length === 0) return [];
 
-  const [{ data: stocks }, { data: prices }] = await Promise.all([
+  const [{ data: stocks }, priceRows] = await Promise.all([
     supabase.from("stock").select("code, name, market, industry").in("code", picks),
-    supabase
-      .from("price_daily")
-      .select("code, close, date")
-      .in("code", picks)
-      .order("date", { ascending: false }),
+    Promise.all(
+      picks.map((code) =>
+        supabase
+          .from("price_daily")
+          .select("close, date")
+          .eq("code", code)
+          .order("date", { ascending: false })
+          .limit(2)
+          .then((r) => ({ code, closes: (r.data ?? []).map((x) => n(x.close)) })),
+      ),
+    ),
   ]);
 
   const stockByCode = new Map(
@@ -156,12 +162,7 @@ export async function getTrending(limit = 8): Promise<TrendingStock[]> {
       } as Stock,
     ]),
   );
-  const closesByCode = new Map<string, number[]>();
-  for (const p of prices ?? []) {
-    const arr = closesByCode.get(p.code as string) ?? [];
-    arr.push(n(p.close)); // date desc → arr[0]=최신
-    closesByCode.set(p.code as string, arr);
-  }
+  const closesByCode = new Map(priceRows.map((p) => [p.code, p.closes])); // date desc → [0]=최신
 
   const out: TrendingStock[] = [];
   for (const code of picks) {

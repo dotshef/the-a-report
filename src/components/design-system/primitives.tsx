@@ -92,7 +92,7 @@ export function StatusPill({
   } as const;
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${tones[tone]}`}
+      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${tones[tone]}`}
       style={{ background: bg[tone] }}
     >
       {children}
