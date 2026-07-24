@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { acquireLock, releaseLock } from "@/lib/ingest/lock";
 import { runBatch } from "@/lib/ingest/pump";
 
-// 단일 Cron 펌프 엔드포인트. Vercel Cron이 5분 간격으로 호출.
+// 단일 Cron 펌프 엔드포인트. Vercel Cron이 매일 정오(KST, 03:00 UTC)부터
+// 한 시간 창에서 5분 간격으로 호출 → 유니버스 한 바퀴 돌면 자동 no-op.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 800; // Pro
