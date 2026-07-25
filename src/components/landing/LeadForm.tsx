@@ -134,8 +134,8 @@ export function LeadForm({
   const [step, setStep] = useState<"idle" | "sent" | "verified">("idle");
   const [busy, setBusy] = useState(false);
   const [smsMsg, setSmsMsg] = useState("");
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const [agreeMarketing, setAgreeMarketing] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(true);
+  const [agreeMarketing, setAgreeMarketing] = useState(true);
   const [openModal, setOpenModal] = useState<null | "privacy" | "marketing">(
     null,
   );
