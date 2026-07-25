@@ -1,5 +1,9 @@
 import { db, dbConfigured } from "@/lib/db/server";
-import { generateTitles } from "@/data/report-titles";
+import {
+  generateTitles,
+  type ReportCategory,
+  type ReportTitle,
+} from "@/data/report-titles";
 import { changeFromCloses, opinionKo } from "@/data/derive";
 import type { Stock } from "@/data/stock";
 import type { ReportData, ReportSection, StockQuote, TrendingStock } from "@/lib/types";
@@ -14,6 +18,19 @@ const n = (v: unknown): number => {
   const x = Number(v);
   return Number.isFinite(x) ? x : 0;
 };
+
+const REPORT_CATEGORIES = new Set<ReportCategory>([
+  "실적",
+  "성장성",
+  "밸류에이션",
+  "수급·모멘텀",
+  "산업·정책",
+  "리스크",
+]);
+
+function isReportCategory(value: unknown): value is ReportCategory {
+  return typeof value === "string" && REPORT_CATEGORIES.has(value as ReportCategory);
+}
 
 // ── 종목 검색: stock(ST) 이름/코드 매칭. 요청 경로는 DB만 읽음(미설정 시 빈 배열). ──
 export async function searchStocks(query: string, limit = 8): Promise<Stock[]> {
@@ -41,7 +58,7 @@ export async function getReport(code: string): Promise<ReportData | null> {
   if (!dbConfigured) return null;
   const supabase = db();
 
-  const [stockR, fundR, priceR, newsR] = await Promise.all([
+  const [stockR, fundR, priceR, newsR, reportTitleR] = await Promise.all([
     supabase.from("stock").select("code, name, market, industry").eq("code", code).maybeSingle(),
     supabase.from("fundamental").select("week52_high, week52_low").eq("code", code).maybeSingle(),
     supabase
@@ -56,6 +73,12 @@ export async function getReport(code: string): Promise<ReportData | null> {
       .eq("code", code)
       .order("published_at", { ascending: false })
       .limit(5),
+    supabase
+      .from("report_title")
+      .select("slot, title, category")
+      .eq("code", code)
+      .order("slot", { ascending: true })
+      .limit(2),
   ]);
 
   const stockRow = stockR.data;
@@ -89,7 +112,22 @@ export async function getReport(code: string): Promise<ReportData | null> {
     updatedAt: latest ? String(latest.date) : "",
   };
 
-  const titles = generateTitles({ name: stock.name, industry: stock.industry });
+  const reportTitleRows = reportTitleR.error ? [] : (reportTitleR.data ?? []);
+  const dbTitles: ReportTitle[] | null =
+    reportTitleRows.length === 2 &&
+    reportTitleRows.every(
+      (row, slot) =>
+        row.slot === slot &&
+        typeof row.title === "string" &&
+        row.title.trim().length > 0 &&
+        isReportCategory(row.category),
+    )
+      ? reportTitleRows.map((row) => ({
+          title: (row.title as string).trim(),
+          category: row.category as ReportCategory,
+        }))
+      : null;
+  const titles = dbTitles ?? generateTitles({ name: stock.name, industry: stock.industry });
   const news = (newsR.data ?? []).map((r) => ({
     title: r.title as string,
     source: (r.source as string) || "한국투자증권",
