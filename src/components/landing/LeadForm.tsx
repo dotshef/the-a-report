@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { submitLead, type LeadState } from "@/app/actions/lead";
@@ -126,7 +126,7 @@ export function LeadForm({
   selectedName?: string;
 }) {
   const [state, formAction] = useActionState(submitLead, initial);
-  const [tracking, setTracking] = useState<Tracking | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -141,7 +141,14 @@ export function LeadForm({
   );
 
   useEffect(() => {
-    setTracking(readTracking());
+    const form = formRef.current;
+    if (!form) return;
+
+    const tracking = readTracking();
+    for (const name of Object.keys(tracking) as (keyof Tracking)[]) {
+      const field = form.elements.namedItem(name);
+      if (field instanceof HTMLInputElement) field.value = tracking[name];
+    }
   }, []);
 
   async function sendCode() {
@@ -323,7 +330,7 @@ export function LeadForm({
           </div>
 
           {/* 최종 제출 — 인증 완료 시에만 활성화 */}
-          <form action={formAction} className="flex flex-col gap-3">
+          <form ref={formRef} action={formAction} className="flex flex-col gap-3">
             <input type="hidden" name="name" value={name} />
             <input type="hidden" name="phone" value={phone} />
             <input
@@ -336,27 +343,27 @@ export function LeadForm({
             <input
               type="hidden"
               name="traffic_source"
-              value={tracking?.traffic_source ?? ""}
+              defaultValue=""
             />
             <input
               type="hidden"
               name="ad_keyword"
-              value={tracking?.ad_keyword ?? ""}
+              defaultValue=""
             />
             <input
               type="hidden"
               name="ad_campaign_id"
-              value={tracking?.ad_campaign_id ?? ""}
+              defaultValue=""
             />
             <input
               type="hidden"
               name="ad_campaign_label"
-              value={tracking?.ad_campaign_label ?? ""}
+              defaultValue=""
             />
             <input
               type="hidden"
               name="landing_url"
-              value={tracking?.landing_url ?? ""}
+              defaultValue=""
             />
             <input
               type="hidden"

@@ -10,24 +10,38 @@ export function SearchBox({ onSelect }: { onSelect: (stock: Stock) => void }) {
   const [results, setResults] = useState<Stock[]>([]);
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  const selectedQueryRef = useRef<string | null>(null);
 
   useEffect(() => {
     const term = q.trim();
-    if (!term) {
-      setResults([]);
+    if (!term) return;
+    if (selectedQueryRef.current === q) {
+      selectedQueryRef.current = null;
       return;
     }
+
+    const controller = new AbortController();
     const t = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(term)}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(term)}`, {
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error(`검색 요청 실패: ${res.status}`);
         const json = (await res.json()) as { results: Stock[] };
-        setResults(json.results);
-        setOpen(true);
+        if (controller.signal.aborted) return;
+        const nextResults = Array.isArray(json.results) ? json.results : [];
+        setResults(nextResults);
+        setOpen(nextResults.length > 0);
       } catch {
+        if (controller.signal.aborted) return;
         setResults([]);
+        setOpen(false);
       }
     }, 180);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      controller.abort();
+    };
   }, [q]);
 
   useEffect(() => {
@@ -40,7 +54,16 @@ export function SearchBox({ onSelect }: { onSelect: (stock: Stock) => void }) {
 
   function pick(c: Stock) {
     onSelect(c);
+    selectedQueryRef.current = c.name;
     setQ(c.name);
+    setResults([]);
+    setOpen(false);
+  }
+
+  function changeQuery(value: string) {
+    selectedQueryRef.current = null;
+    setQ(value);
+    setResults([]);
     setOpen(false);
   }
 
@@ -51,7 +74,7 @@ export function SearchBox({ onSelect }: { onSelect: (stock: Stock) => void }) {
           <Icon name="search" size={20} color="var(--kb-gray)" />
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => changeQuery(e.target.value)}
             onFocusCapture={() => results.length && setOpen(true)}
             placeholder="종목명 또는 종목코드 검색"
             className="min-h-12 w-full bg-transparent text-base outline-none placeholder:text-kb-gray"
