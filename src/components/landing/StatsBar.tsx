@@ -15,7 +15,7 @@ export function StatsBar({ stats }: { stats: LandingStats }) {
         </span>
         <span className="h-3 w-px bg-kb-border" />
         <span className="font-semibold text-kb-critical">
-          이번 주 무료 발송분 잔여 <b className="font-bold">{won(stats.weeklyFreeRemaining)}</b>건
+          이번 주 무료 발송분 잔여 <b className="font-bold text-kb-black">{won(stats.weeklyFreeRemaining)}</b>건
         </span>
       </div>
     </div>

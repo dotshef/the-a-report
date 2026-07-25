@@ -7,6 +7,7 @@ import {
   Circle,
   Flame,
   LockKeyhole,
+  LockKeyholeOpen,
   Newspaper,
   Phone,
   Search,
@@ -28,6 +29,7 @@ export type IconName =
   | "arrow-right"
   | "chart"
   | "lock"
+  | "lock-open"
   | "news"
   | "phone";
 
@@ -43,6 +45,7 @@ const icons: Record<IconName, LucideIcon> = {
   "arrow-right": ArrowRight,
   chart: ChartNoAxesCombined,
   lock: LockKeyhole,
+  "lock-open": LockKeyholeOpen,
   news: Newspaper,
   phone: Phone,
 };

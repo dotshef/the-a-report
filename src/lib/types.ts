@@ -19,7 +19,7 @@ export interface StockQuote {
   low52w: number;
   /** 3개월 종가 시계열 (오름차순) */
   history: { date: string; close: number }[];
-  /** 시세 스냅샷 시각 */
+  /** 시세 기준 거래일 (price_daily 최신 행의 date, 종가 기준). 빈 문자열=데이터 없음 */
   updatedAt: string;
 }
 

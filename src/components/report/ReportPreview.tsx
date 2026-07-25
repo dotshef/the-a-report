@@ -33,12 +33,15 @@ export function ReportPreview({ report }: { report: ReportData }) {
       {/* ── 리포트 상단: 헤더 + 시세 + 차트 ── */}
       <Card className="!p-0 overflow-hidden">
         {/* 헤더 — 기업 마크 없이 회사명만 (PRD L9) */}
-        <div className="border-b border-kb-border p-5">
+        <div
+          className="border-b border-kb-border p-5 text-kb-white"
+          style={{ background: "#1a1f2e" }}
+        >
           <div className="flex items-baseline gap-2">
             <h3 className="text-xl font-bold">{stock.name}</h3>
-            <span className="text-sm text-kb-gray">{stock.code}</span>
+            <span className="text-sm text-kb-light-gray">{stock.code}</span>
           </div>
-          <div className="mt-1 flex items-center gap-1.5 text-xs text-kb-gray">
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-kb-light-gray">
             <span>{marketLabel(stock.market)}</span>
             {stock.industry && (
               <>
@@ -57,15 +60,15 @@ export function ReportPreview({ report }: { report: ReportData }) {
                 {signed(quote.change)}원 ({pct(quote.changeRate)})
               </div>
             </div>
-            <span className="text-xs text-kb-gray">
-              {new Date(quote.updatedAt).toLocaleString("ko-KR", {
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              기준
-            </span>
+            {quote.updatedAt && (
+              <span className="text-xs text-kb-light-gray">
+                {new Date(quote.updatedAt).toLocaleDateString("ko-KR", {
+                  month: "long",
+                  day: "numeric",
+                })}{" "}
+                기준
+              </span>
+            )}
           </div>
         </div>
 

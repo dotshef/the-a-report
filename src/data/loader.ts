@@ -85,7 +85,8 @@ export async function getReport(code: string): Promise<ReportData | null> {
     high52w: fund?.week52_high ? n(fund.week52_high) : closes.length ? Math.max(...closes) : current,
     low52w: fund?.week52_low ? n(fund.week52_low) : closes.length ? Math.min(...closes) : current,
     history: priceAsc.slice(-63).map((r) => ({ date: String(r.date), close: n(r.close) })),
-    updatedAt: new Date().toISOString(),
+    // 시세 기준 시각 = 현재가로 쓰는 price_daily 최신 행의 거래일(종가 기준).
+    updatedAt: latest ? String(latest.date) : "",
   };
 
   const titles = generateTitles({ name: stock.name, industry: stock.industry });
