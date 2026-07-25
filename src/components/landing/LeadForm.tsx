@@ -366,12 +366,12 @@ export function LeadForm({
 
             <div className="flex flex-col gap-2">
               <div className="flex items-start gap-2">
-                <label className="flex flex-1 items-start gap-2 text-xs leading-relaxed text-kb-gray">
+                <label className="flex flex-1 cursor-pointer items-start gap-2 text-xs leading-relaxed text-kb-gray">
                   <input
                     type="checkbox"
                     checked={agreePrivacy}
                     onChange={(e) => setAgreePrivacy(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 accent-kb-black"
+                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-kb-black"
                   />
                   <span>
                     <span className="font-semibold text-kb-black">[필수]</span>{" "}
@@ -387,12 +387,12 @@ export function LeadForm({
                 </button>
               </div>
               <div className="flex items-start gap-2">
-                <label className="flex flex-1 items-start gap-2 text-xs leading-relaxed text-kb-gray">
+                <label className="flex flex-1 cursor-pointer items-start gap-2 text-xs leading-relaxed text-kb-gray">
                   <input
                     type="checkbox"
                     checked={agreeMarketing}
                     onChange={(e) => setAgreeMarketing(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 accent-kb-black"
+                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-kb-black"
                   />
                   <span>
                     <span className="font-semibold text-kb-black">[선택]</span>{" "}

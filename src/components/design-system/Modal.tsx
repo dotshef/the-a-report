@@ -41,7 +41,7 @@ export function Modal({
       className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
     >
       <div
-        className="absolute inset-0 bg-kb-black/40 animate-[fadeIn_150ms_ease-out]"
+        className="absolute inset-0 cursor-pointer bg-kb-black/40 animate-[fadeIn_150ms_ease-out]"
         onClick={onClose}
       />
       <div
@@ -57,7 +57,7 @@ export function Modal({
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-kb-gray transition-colors hover:bg-kb-fill hover:text-kb-black"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-kb-gray transition-colors hover:bg-kb-fill hover:text-kb-black"
           >
             <Icon name="close" size={20} />
           </button>

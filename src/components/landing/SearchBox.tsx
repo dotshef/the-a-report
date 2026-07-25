@@ -66,7 +66,7 @@ export function SearchBox({ onSelect }: { onSelect: (stock: Stock) => void }) {
                 <button
                   type="button"
                   onClick={() => pick(c)}
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-kb-subtle"
+                  className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left hover:bg-kb-subtle"
                 >
                   <span className="flex items-baseline gap-2">
                     <span className="text-sm font-semibold">{c.name}</span>
