@@ -2,6 +2,7 @@
 // env 미설정 시 no-op(로그만)으로 degrade해 로컬에서 실행 가능.
 
 import { db, dbConfigured } from "@/lib/db/server";
+import { SITE_URL } from "@/lib/site";
 
 // ---------- report_request (리드) ----------
 export interface ReportRequestInput {
@@ -30,7 +31,8 @@ export async function insertReportRequest(
     ad_keyword: input.adKeyword ?? null,
     ad_campaign_id: input.adCampaignId ?? null,
     ad_campaign_label: input.adCampaignLabel ?? null,
-    landing_url: input.landingUrl ?? null,
+    // JS 비활성 등으로 클라이언트 값이 비면 정식 도메인 루트로 기록한다.
+    landing_url: input.landingUrl ?? SITE_URL,
   });
   return { ok: !error };
 }
