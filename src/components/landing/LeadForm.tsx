@@ -209,7 +209,7 @@ export function LeadForm({
             >
               <Icon name="check" size={28} color="var(--kb-positive)" />
             </div>
-            <p className="text-base font-semibold">{state.message}</p>
+            <p className="whitespace-pre-line text-base font-semibold">{state.message}</p>
           </div>
         </section>
       </>

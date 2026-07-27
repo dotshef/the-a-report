@@ -59,6 +59,6 @@ export async function submitLead(
 
   return {
     ok: true,
-    message: "신청이 완료되었어요. 오늘 저녁 리포트를 보내드릴게요!",
+    message: "신청이 완료되었습니다.\n담당자가 순차적으로 연락드릴 예정입니다.",
   };
 }
