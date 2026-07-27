@@ -4,7 +4,7 @@
 // (JSX가 아닌 문자열 템플릿인 이유: react-dom/server는 Next 서버 컴포넌트 그래프에서 import 불가.)
 
 import { formatPhone } from "@/lib/phone";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 
 // globals.css :root 토큰 미러 — 값이 바뀌면 여기도 함께 갱신한다.
 const T = {
@@ -87,7 +87,6 @@ export function renderLeadNotificationEmail({
   submittedAt = new Date(),
 }: LeadNotificationEmailProps): string {
   const headline = `${SITE_NAME} 리포트 신청이 들어왔습니다`;
-  const host = SITE_URL.replace(/^https?:\/\//, "");
 
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -134,13 +133,6 @@ export function renderLeadNotificationEmail({
                 </td>
               </tr>
             </table>
-
-            <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:${T.coolGray};">오늘 저녁 리포트 발송 대상에 포함해 주세요.</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:14px 24px;border-top:1px solid ${T.border};font-size:12px;color:${T.gray};">
-            <a href="${esc(SITE_URL)}" style="color:${T.gray};text-decoration:none;">${esc(host)}</a> &middot; 리드 신청 알림 (자동 발송)
           </td>
         </tr>
       </table>

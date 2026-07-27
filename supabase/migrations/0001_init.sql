@@ -117,12 +117,12 @@ create index if not exists report_request_phone_idx   on report_request (phone);
 create table if not exists phone_verification (
   id          bigserial   primary key,
   phone       text        not null,
+  name        text,                          -- 인증 요청 시점의 이름(리드 이름과 대조용)
   code_hash   text        not null,          -- SHA-256(code + SMS_VERIFICATION_SECRET)
   expires_at  timestamp with time zone not null,
   fail_count  smallint    not null default 0,
   verified_at timestamp without time zone,
-  created_at  timestamp without time zone not null default (now() at time zone 'Asia/Seoul'),
-  name        text
+  created_at  timestamp without time zone not null default (now() at time zone 'Asia/Seoul')
 );
 create index if not exists phone_verification_phone_created_idx
   on phone_verification (phone, created_at desc);
