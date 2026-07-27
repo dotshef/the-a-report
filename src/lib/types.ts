@@ -52,3 +52,19 @@ export interface TrendingStock {
   opinion: string;
   price: number;
 }
+
+/** 상단 시세 티커 한 칸 — top_view 종목의 종목명·종가·등락률 */
+export interface TickerItem {
+  code: string;
+  name: string;
+  /** 최신 종가 */
+  price: number;
+  /** 전일 대비 등락률 (%) */
+  changeRate: number;
+}
+
+export interface TickerData {
+  items: TickerItem[];
+  /** 기준 거래일 (price_daily 최신 date). 종가 기준임을 티커에 표기하는 데 쓴다. */
+  asOf: string;
+}

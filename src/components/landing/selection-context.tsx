@@ -7,7 +7,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
 import type { Stock } from "@/data/stock";
 import type { ReportData, TrendingStock } from "@/lib/types";
 
@@ -20,7 +19,6 @@ type SelectionContextValue = {
   loading: boolean;
   loadReport: (stock: Stock) => void;
   selectByCode: (code: string) => void;
-  goToRequest: () => void;
 };
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
@@ -40,7 +38,6 @@ export function SelectionProvider({
   trending: TrendingStock[];
   children: ReactNode;
 }) {
-  const router = useRouter();
   const [selected, setSelected] = useState<Stock | null>(null);
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -65,15 +62,6 @@ export function SelectionProvider({
     [trending, loadReport],
   );
 
-  const goToRequest = useCallback(() => {
-    if (!selected) return;
-    const params = new URLSearchParams({
-      code: selected.code,
-      name: selected.name,
-    });
-    router.push(`/request?${params.toString()}`);
-  }, [router, selected]);
-
   return (
     <SelectionContext.Provider
       value={{
@@ -83,7 +71,6 @@ export function SelectionProvider({
         loading,
         loadReport,
         selectByCode,
-        goToRequest,
       }}
     >
       {children}

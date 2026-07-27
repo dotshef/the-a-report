@@ -6,7 +6,14 @@ import {
 } from "@/data/report-titles";
 import { changeFromCloses, opinionKo } from "@/data/derive";
 import type { Stock } from "@/data/stock";
-import type { ReportData, ReportSection, StockQuote, TrendingStock } from "@/lib/types";
+import type {
+  ReportData,
+  ReportSection,
+  StockQuote,
+  TickerData,
+  TickerItem,
+  TrendingStock,
+} from "@/lib/types";
 
 // 한 줄 결론 / 분석 결과는 마스킹되므로 미리보기에서는 자리표시 텍스트로 채운다.
 const MASKED_CONCLUSION =
@@ -144,6 +151,59 @@ export async function getReport(code: string): Promise<ReportData | null> {
   }));
 
   return { stock, quote, sections };
+}
+
+// ── 상단 시세 티커: top_view 상위 N의 종목명 + 최신 종가 + 전일 대비 등락률. ──
+// 리포트 미리보기(getReport)와 같은 소스(price_daily 최신 2개 종가)로 등락률을 계산한다.
+// price_daily는 장 마감 후 수집(cron 22:00 KST)이므로 항상 '확정 종가' 기준이고,
+// 장중에는 갱신되지 않는다 → asOf(기준 거래일)를 함께 돌려 화면에 표기한다.
+export async function getTicker(limit = 12): Promise<TickerData> {
+  if (!dbConfigured) return { items: [], asOf: "" };
+  const supabase = db();
+
+  const { data: tv } = await supabase
+    .from("top_view")
+    .select("rank, code")
+    .order("rank", { ascending: true })
+    .limit(limit);
+  const codes = (tv ?? []).map((r) => r.code as string);
+  if (codes.length === 0) return { items: [], asOf: "" };
+
+  const [{ data: stocks }, priceRows] = await Promise.all([
+    supabase.from("stock").select("code, name").in("code", codes),
+    Promise.all(
+      codes.map((code) =>
+        supabase
+          .from("price_daily")
+          .select("close, date")
+          .eq("code", code)
+          .order("date", { ascending: false })
+          .limit(2)
+          // date desc → 오름차순(과거→최신)으로 뒤집어 changeFromCloses에 맞춘다.
+          .then((r) => ({ code, rows: (r.data ?? []).slice().reverse() })),
+      ),
+    ),
+  ]);
+
+  const nameByCode = new Map((stocks ?? []).map((s) => [s.code as string, s.name as string]));
+  const rowsByCode = new Map(priceRows.map((p) => [p.code, p.rows]));
+
+  const items: TickerItem[] = [];
+  let asOf = "";
+  for (const code of codes) {
+    const name = nameByCode.get(code);
+    const rows = rowsByCode.get(code) ?? [];
+    const latest = rows[rows.length - 1];
+    const price = latest ? n(latest.close) : 0;
+    // 이름·종가가 없으면 티커에 노출하지 않는다.
+    if (!name || price <= 0) continue;
+    const { changeRate } = changeFromCloses(rows.map((x) => n(x.close)));
+    items.push({ code, name, price, changeRate: Number(changeRate.toFixed(2)) });
+    // 종목별로 최신 거래일이 다를 수 있어(수집 실패 등) 가장 앞선 날짜를 기준일로 쓴다.
+    const date = String(latest.date);
+    if (date > asOf) asOf = date;
+  }
+  return { items, asOf };
 }
 
 // ── 지금 많이 찾는 종목: top_view 상위 10 중 투자의견 보유 종목만 최대 N. ──

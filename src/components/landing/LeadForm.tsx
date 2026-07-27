@@ -98,18 +98,40 @@ function SubmitButton({ canSubmit }: { canSubmit: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" fullWidth disabled={pending || !canSubmit}>
-      {pending ? "신청 중…" : "무료 리포트 신청 완료하기"}
+      {pending ? "신청 중…" : "지금 무료로 리포트 받기 →"}
     </Button>
   );
 }
 
+// 제출 버튼 아래 안내 — 무엇을 받는지 + 유선 안내를 명시한다.
+function SubmitNote() {
+  return (
+    <p className="flex items-start justify-center gap-1.5 rounded-[10px] border border-brand-border bg-brand-surface px-3 py-2.5 text-center text-xs leading-relaxed font-semibold text-brand-muted">
+      <Icon
+        name="lock"
+        size={14}
+        color="var(--brand-strong)"
+        className="mt-0.5 shrink-0"
+      />
+      <span>
+        <b className="font-bold text-brand-strong">
+          상승 근거 · 대응 시나리오 · 리스크 체크
+        </b>
+        까지 — 신청하면 담당자가 유선으로 안내해 드립니다
+      </span>
+    </p>
+  );
+}
+
 // 헤더 위치 뒤로가기 — 종목 재선택을 위해 루트로 복귀.
+// 배경을 따로 깔지 않고 페이지 그라데이션 위에 그대로 얹는다
+// (배경이 없으므로 sticky도 두지 않는다 — 스크롤 시 본문과 겹친다).
 function BackHeader() {
   return (
-    <header className="sticky top-0 z-10 flex items-center bg-white/90 px-5 py-3 backdrop-blur">
+    <header className="flex items-center px-5 pt-4">
       <Link
         href="/"
-        className="inline-flex items-center gap-1 text-sm text-kb-gray"
+        className="inline-flex items-center gap-1 text-sm font-semibold text-brand transition-colors duration-150 hover:text-brand-dark"
       >
         ← 종목 다시 선택
       </Link>
@@ -117,13 +139,31 @@ function BackHeader() {
   );
 }
 
+// 신청 완료 안내 — 폼 자리에 그대로 치환된다.
+function DoneMessage({ message }: { message: string }) {
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-[16px] bg-kb-fill p-8 text-center">
+      <div
+        className="flex h-14 w-14 items-center justify-center rounded-[16px]"
+        style={{ background: "rgba(15,190,108,0.12)" }}
+      >
+        <Icon name="check" size={28} color="var(--kb-positive)" />
+      </div>
+      <p className="whitespace-pre-line text-base font-semibold">{message}</p>
+    </div>
+  );
+}
+
 // 신청 폼 (PRD L3) — 이름 + 휴대폰 인증(egress gateway SMS) 후 리드 저장.
+// embedded=true 이면 랜딩 ① 섹션 카드 안에 필드만 렌더한다(헤더·카드·제목 없음).
 export function LeadForm({
   selectedCode,
   selectedName,
+  embedded = false,
 }: {
   selectedCode?: string;
   selectedName?: string;
+  embedded?: boolean;
 }) {
   const [state, formAction] = useActionState(submitLead, initial);
   const formRef = useRef<HTMLFormElement>(null);
@@ -198,19 +238,12 @@ export function LeadForm({
   }
 
   if (state.ok) {
+    if (embedded) return <DoneMessage message={state.message} />;
     return (
       <>
         <BackHeader />
         <section id="apply" className="scroll-mt-6 px-5">
-          <div className="flex flex-col items-center gap-3 rounded-[16px] bg-kb-fill p-8 text-center">
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-[16px]"
-              style={{ background: "rgba(15,190,108,0.12)" }}
-            >
-              <Icon name="check" size={28} color="var(--kb-positive)" />
-            </div>
-            <p className="whitespace-pre-line text-base font-semibold">{state.message}</p>
-          </div>
+          <DoneMessage message={state.message} />
         </section>
       </>
     );
@@ -218,14 +251,220 @@ export function LeadForm({
 
   const verified = step === "verified";
 
+  const fields = (
+    <>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="lead-name" className="text-sm font-semibold">
+            이름
+          </label>
+          <input
+            id="lead-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="홍길동"
+            className={inputCls}
+          />
+        </div>
+
+        {/* 전화번호 + 인증번호 받기 */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="lead-phone" className="text-sm font-semibold">
+            전화번호
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="lead-phone"
+              value={phone}
+              onChange={(e) => setPhone(formatPhone(e.target.value))}
+              inputMode="tel"
+              placeholder="010-1234-5678"
+              className={inputCls}
+              readOnly={verified}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={sendCode}
+              disabled={
+                busy ||
+                verified ||
+                name.trim().length < 1 ||
+                phone.length < 12
+              }
+              className="shrink-0 whitespace-nowrap"
+            >
+              {step === "idle" ? "인증번호 받기" : "재발송"}
+            </Button>
+          </div>
+        </div>
+
+        {/* 인증번호 입력 + 확인 */}
+        {step !== "idle" && (
+          <div className="flex gap-2">
+            <input
+              value={code}
+              onChange={(e) =>
+                setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+              }
+              inputMode="numeric"
+              placeholder="인증번호 6자리"
+              className={inputCls}
+              aria-label="인증번호"
+              readOnly={verified}
+            />
+            <Button
+              type="button"
+              onClick={verifyCode}
+              disabled={busy || verified || code.length !== 6}
+              className="shrink-0 whitespace-nowrap"
+            >
+              {verified ? "인증완료" : "확인"}
+            </Button>
+          </div>
+        )}
+
+        {verified && (
+          <p className="flex items-center gap-1 text-sm font-semibold text-kb-positive">
+            <Icon name="check" size={16} color="var(--kb-positive)" />
+            휴대폰 인증이 완료됐어요
+          </p>
+        )}
+        {smsMsg && <p className="text-sm text-kb-critical">{smsMsg}</p>}
+      </div>
+
+      {/* 최종 제출 — 인증 완료 시에만 활성화 */}
+      <form ref={formRef} action={formAction} className="flex flex-col gap-3">
+        <input type="hidden" name="name" value={name} />
+        <input type="hidden" name="phone" value={phone} />
+        <input
+          type="hidden"
+          name="interest"
+          value={
+            selectedName ? `${selectedName}(${selectedCode ?? ""})` : ""
+          }
+        />
+        <input
+          type="hidden"
+          name="traffic_source"
+          defaultValue=""
+        />
+        <input
+          type="hidden"
+          name="ad_keyword"
+          defaultValue=""
+        />
+        <input
+          type="hidden"
+          name="ad_campaign_id"
+          defaultValue=""
+        />
+        <input
+          type="hidden"
+          name="ad_campaign_label"
+          defaultValue=""
+        />
+        <input
+          type="hidden"
+          name="landing_url"
+          defaultValue=""
+        />
+        <input
+          type="hidden"
+          name="marketing_consent"
+          value={agreeMarketing ? "1" : "0"}
+        />
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <label className="flex flex-1 cursor-pointer items-start gap-2 text-xs leading-relaxed text-kb-gray">
+              <input
+                type="checkbox"
+                checked={agreePrivacy}
+                onChange={(e) => setAgreePrivacy(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-kb-black"
+              />
+              <span>
+                <span className="font-semibold text-kb-black">[필수]</span>{" "}
+                개인정보 수집·이용에 동의해요.
+              </span>
+            </label>
+            <button
+              type="button"
+              onClick={() => setOpenModal("privacy")}
+              className="relative z-10 -mt-0.5 shrink-0 cursor-pointer rounded-[8px] px-2 py-1 text-xs text-kb-gray underline underline-offset-2 transition-colors hover:bg-kb-fill hover:text-kb-black"
+            >
+              보기
+            </button>
+          </div>
+          <div className="flex items-start gap-2">
+            <label className="flex flex-1 cursor-pointer items-start gap-2 text-xs leading-relaxed text-kb-gray">
+              <input
+                type="checkbox"
+                checked={agreeMarketing}
+                onChange={(e) => setAgreeMarketing(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-kb-black"
+              />
+              <span>
+                <span className="font-semibold text-kb-black">[선택]</span>{" "}
+                광고성 정보 수신에 동의해요.
+              </span>
+            </label>
+            <button
+              type="button"
+              onClick={() => setOpenModal("marketing")}
+              className="relative z-10 -mt-0.5 shrink-0 cursor-pointer rounded-[8px] px-2 py-1 text-xs text-kb-gray underline underline-offset-2 transition-colors hover:bg-kb-fill hover:text-kb-black"
+            >
+              보기
+            </button>
+          </div>
+        </div>
+
+        {state.message && !state.ok && (
+          <p className="text-sm text-kb-critical">{state.message}</p>
+        )}
+        <SubmitButton canSubmit={verified && agreePrivacy} />
+        <SubmitNote />
+      </form>
+    </>
+  );
+
+  const modals = (
+    <>
+      <Modal
+        open={openModal === "privacy"}
+        onClose={() => setOpenModal(null)}
+        title="개인정보 수집·이용 동의"
+      >
+        <PrivacyConsentDetail />
+      </Modal>
+      <Modal
+        open={openModal === "marketing"}
+        onClose={() => setOpenModal(null)}
+        title="광고성 정보 수신 동의"
+      >
+        <MarketingConsentDetail />
+      </Modal>
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <>
+        {fields}
+        {modals}
+      </>
+    );
+  }
+
   return (
     <>
       <BackHeader />
       <section id="apply" className="scroll-mt-6 px-5">
-        <div className="flex flex-col gap-4 rounded-[16px] bg-kb-fill p-6">
+        <div className="flex flex-col gap-4 rounded-[16px] border border-kb-border bg-kb-white p-6">
           <h2 className="text-xl font-bold leading-snug">
             리포트를 받으실{" "}
-            <span className="bg-[linear-gradient(to_top,var(--kb-yellow)_0,var(--kb-yellow)_34%,transparent_34%)] px-0.5">
+            <span className="bg-[linear-gradient(to_top,var(--brand-surface)_0,var(--brand-surface)_34%,transparent_34%)] px-0.5">
               정보를 입력
             </span>
             하세요
@@ -249,195 +488,10 @@ export function LeadForm({
             </div>
           )}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="lead-name" className="text-sm font-semibold">
-                이름
-              </label>
-              <input
-                id="lead-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="홍길동"
-                className={inputCls}
-              />
-            </div>
-
-            {/* 전화번호 + 인증번호 받기 */}
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="lead-phone" className="text-sm font-semibold">
-                전화번호
-              </label>
-              <div className="flex gap-2">
-                <input
-                  id="lead-phone"
-                  value={phone}
-                  onChange={(e) => setPhone(formatPhone(e.target.value))}
-                  inputMode="tel"
-                  placeholder="010-1234-5678"
-                  className={inputCls}
-                  readOnly={verified}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={sendCode}
-                  disabled={
-                    busy ||
-                    verified ||
-                    name.trim().length < 1 ||
-                    phone.length < 12
-                  }
-                  className="shrink-0 whitespace-nowrap"
-                >
-                  {step === "idle" ? "인증번호 받기" : "재발송"}
-                </Button>
-              </div>
-            </div>
-
-            {/* 인증번호 입력 + 확인 */}
-            {step !== "idle" && (
-              <div className="flex gap-2">
-                <input
-                  value={code}
-                  onChange={(e) =>
-                    setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
-                  }
-                  inputMode="numeric"
-                  placeholder="인증번호 6자리"
-                  className={inputCls}
-                  aria-label="인증번호"
-                  readOnly={verified}
-                />
-                <Button
-                  type="button"
-                  onClick={verifyCode}
-                  disabled={busy || verified || code.length !== 6}
-                  className="shrink-0 whitespace-nowrap"
-                >
-                  {verified ? "인증완료" : "확인"}
-                </Button>
-              </div>
-            )}
-
-            {verified && (
-              <p className="flex items-center gap-1 text-sm font-semibold text-kb-positive">
-                <Icon name="check" size={16} color="var(--kb-positive)" />
-                휴대폰 인증이 완료됐어요
-              </p>
-            )}
-            {smsMsg && <p className="text-sm text-kb-critical">{smsMsg}</p>}
-          </div>
-
-          {/* 최종 제출 — 인증 완료 시에만 활성화 */}
-          <form ref={formRef} action={formAction} className="flex flex-col gap-3">
-            <input type="hidden" name="name" value={name} />
-            <input type="hidden" name="phone" value={phone} />
-            <input
-              type="hidden"
-              name="interest"
-              value={
-                selectedName ? `${selectedName}(${selectedCode ?? ""})` : ""
-              }
-            />
-            <input
-              type="hidden"
-              name="traffic_source"
-              defaultValue=""
-            />
-            <input
-              type="hidden"
-              name="ad_keyword"
-              defaultValue=""
-            />
-            <input
-              type="hidden"
-              name="ad_campaign_id"
-              defaultValue=""
-            />
-            <input
-              type="hidden"
-              name="ad_campaign_label"
-              defaultValue=""
-            />
-            <input
-              type="hidden"
-              name="landing_url"
-              defaultValue=""
-            />
-            <input
-              type="hidden"
-              name="marketing_consent"
-              value={agreeMarketing ? "1" : "0"}
-            />
-
-            <div className="flex flex-col gap-2">
-              <div className="flex items-start gap-2">
-                <label className="flex flex-1 cursor-pointer items-start gap-2 text-xs leading-relaxed text-kb-gray">
-                  <input
-                    type="checkbox"
-                    checked={agreePrivacy}
-                    onChange={(e) => setAgreePrivacy(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-kb-black"
-                  />
-                  <span>
-                    <span className="font-semibold text-kb-black">[필수]</span>{" "}
-                    개인정보 수집·이용에 동의해요.
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setOpenModal("privacy")}
-                  className="relative z-10 -mt-0.5 shrink-0 cursor-pointer rounded-[8px] px-2 py-1 text-xs text-kb-gray underline underline-offset-2 transition-colors hover:bg-kb-fill hover:text-kb-black"
-                >
-                  보기
-                </button>
-              </div>
-              <div className="flex items-start gap-2">
-                <label className="flex flex-1 cursor-pointer items-start gap-2 text-xs leading-relaxed text-kb-gray">
-                  <input
-                    type="checkbox"
-                    checked={agreeMarketing}
-                    onChange={(e) => setAgreeMarketing(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-kb-black"
-                  />
-                  <span>
-                    <span className="font-semibold text-kb-black">[선택]</span>{" "}
-                    광고성 정보 수신에 동의해요.
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setOpenModal("marketing")}
-                  className="relative z-10 -mt-0.5 shrink-0 cursor-pointer rounded-[8px] px-2 py-1 text-xs text-kb-gray underline underline-offset-2 transition-colors hover:bg-kb-fill hover:text-kb-black"
-                >
-                  보기
-                </button>
-              </div>
-            </div>
-
-            {state.message && !state.ok && (
-              <p className="text-sm text-kb-critical">{state.message}</p>
-            )}
-            <SubmitButton canSubmit={verified && agreePrivacy} />
-          </form>
+          {fields}
         </div>
       </section>
-
-      <Modal
-        open={openModal === "privacy"}
-        onClose={() => setOpenModal(null)}
-        title="개인정보 수집·이용 동의"
-      >
-        <PrivacyConsentDetail />
-      </Modal>
-      <Modal
-        open={openModal === "marketing"}
-        onClose={() => setOpenModal(null)}
-        title="광고성 정보 수신 동의"
-      >
-        <MarketingConsentDetail />
-      </Modal>
+      {modals}
     </>
   );
 }

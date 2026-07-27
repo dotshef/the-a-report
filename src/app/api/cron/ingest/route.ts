@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { acquireLock, releaseLock } from "@/lib/ingest/lock";
 import { runBatch } from "@/lib/ingest/pump";
 
-// 단일 Cron 펌프 엔드포인트. Vercel Cron이 매일 정오(KST, 03:00~04:55 UTC)
-// 2시간 창에서 5분 간격 호출. 동시 워커로 KIS 12req/s 포화 → 1회당 150종목 ~40s.
+// 단일 Cron 펌프 엔드포인트. Vercel Cron이 매일 밤 22:00~23:55 KST
+// (13:00~14:55 UTC) 2시간 창에서 5분 간격 호출.
+// 장 마감(15:30 KST) 이후에 돌려야 KIS 일봉의 당일 봉이 '확정 종가'로 들어온다.
+// 장중에 수집하면 미완성 봉의 stck_clpr = 그 시점 현재가라서 종가·등락률이 어긋난다.
+// 동시 워커로 KIS 12req/s 포화 → 1회당 150종목 ~40s.
 // 2,700종목 한 바퀴 ~19회(=약 1.5h). 다 돌면 12h 신선도로 남은 호출은 자동 no-op.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

@@ -20,7 +20,7 @@ export default async function RequestPage({
   const { code, name } = await searchParams;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col gap-8 bg-white pb-16 shadow-[0_0_60px_rgba(0,0,0,0.06)]">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col gap-8 pb-16">
       <LeadForm selectedCode={code} selectedName={name} />
       <SiteFooter />
     </main>

@@ -3,14 +3,23 @@
 /* ============================================================
    KakaoBank Design System tokens
    Ported from: KakaoBank Design System/colors_and_type.css
-   Brand primary: gold (#D4AF37). Near-black: #1E1E1E.
+   Near-black: #1E1E1E.
+
+   ⚠️ 디자인 시스템 예외 — 포인트 컬러
+   KakaoBank DS의 골드/옐로우(#D4AF37, #FFE300) 대신 필드그린을 브랜드
+   포인트 컬러로 사용한다. 네이버 그린(#03C75A, 형광 계열)과 채도·명도를
+   확실히 구분해 파워링크 검수 오인을 피하려는 목적. 나머지 토큰(뉴트럴·
+   시멘틱·라운드·모션)은 DS를 그대로 따른다.
    ============================================================ */
 :root {
-  /* Brand */
-  --kb-gold: #d4af37; /* metallic gold — brand primary */
-  --kb-gold-soft: #e8cf7e; /* lighter gold — hover borders / accents */
-  --kb-yellow: var(--kb-gold); /* alias: legacy token name, now gold */
-  --kb-yellow-signal: #ffe300; /* PANTONE Yellow 012 — KakaoBank brand yellow (highlight/accent) */
+  /* Brand — 필드그린 (DS 예외) */
+  --brand-primary: #2e6b43; /* 포인트 컬러 — 버튼/강조 면 */
+  --brand-primary-dark: #1f4e30; /* hover·press·진한 면 */
+  --brand-strong: #235238; /* 라벨·강조 텍스트 */
+  --brand-muted: #3c7a55; /* 서브텍스트 */
+  --brand-surface: #eaf3ec; /* 라이트 배경 — 하이라이터/연한 면 */
+  --brand-border: #cfe4d5; /* 브랜드 톤 보더 */
+
   --kb-black: #1e1e1e; /* near-black — Kakao family */
   --kb-white: #ffffff;
 
@@ -44,8 +53,10 @@
   --bg-surface: var(--kb-white);
   --bg-fill: var(--kb-surface-fill);
   --bg-subtle: var(--kb-surface-subtle);
-  /* 모바일 레이아웃 바깥(데스크톱 여백) 백드롭 — 중립 그레이 톤 */
-  --bg-backdrop: linear-gradient(180deg, #f7f8fa, #eceef2);
+  /* 페이지 백드롭 — 브랜드 그린 단일 그라데이션.
+     구간을 나누면 이음매가 보이므로 페이지 전체에 하나만 깐다.
+     카드(흰 면)만 떠 보이도록 채도는 아주 낮게 유지. */
+  --bg-backdrop: linear-gradient(180deg, #e4f0e8 0%, #f3f8f4 58%, #ecf4ee 100%);
 
   /* Borders */
   --border-default: var(--kb-light-gray);
@@ -80,10 +91,12 @@
 
 /* Expose tokens as Tailwind theme utilities (Tailwind v4 @theme) */
 @theme inline {
-  --color-kb-gold: var(--kb-gold);
-  --color-kb-gold-soft: var(--kb-gold-soft);
-  --color-kb-yellow: var(--kb-yellow);
-  --color-kb-yellow-signal: var(--kb-yellow-signal);
+  --color-brand: var(--brand-primary);
+  --color-brand-dark: var(--brand-primary-dark);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-border: var(--brand-border);
   --color-kb-black: var(--kb-black);
   --color-kb-white: var(--kb-white);
   --color-kb-gray: var(--kb-gray);
@@ -111,10 +124,14 @@ html,
 body {
   font-family: var(--font-sans);
   color: var(--fg-1);
-  background: var(--bg-backdrop);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* 뷰포트에 고정해 스크롤해도 그라데이션이 끊기지 않게 한다 */
+body {
+  background: var(--bg-backdrop) fixed;
 }
 
 /* Banking amounts — tabular figures */
@@ -156,6 +173,27 @@ body {
   }
 }
 
+/* Pulse dot — 검색 유입 배지의 "지금 막" 신호 */
+@keyframes kb-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(15, 190, 108, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(15, 190, 108, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 190, 108, 0);
+  }
+}
+.kb-pulse {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--kb-positive);
+  animation: kb-pulse 1.6s infinite;
+}
+
 /* Skeleton shimmer — 로딩 중 리포트 자리표시자 (좌→우 광택 스윕) */
 @keyframes kb-shimmer {
   from {
@@ -192,6 +230,24 @@ body {
   animation: kb-reveal var(--motion-page) var(--ease-standard) both;
 }
 
+/* Market ticker — 상단 시세 바. 트랙 두 벌을 -50%까지 밀어 끊김 없이 순환. */
+@keyframes kb-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.kb-ticker-track {
+  width: max-content;
+  animation: kb-ticker 40s linear infinite;
+  will-change: transform;
+}
+.kb-ticker:hover .kb-ticker-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --motion-fast: 0ms;
@@ -202,5 +258,10 @@ body {
   * {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+  /* 티커는 위 규칙에 걸리면 -50% 위치로 튀므로 애니메이션 자체를 끈다 */
+  .kb-ticker-track {
+    animation: none !important;
+    transform: none !important;
   }
 }

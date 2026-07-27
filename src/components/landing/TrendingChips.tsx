@@ -14,14 +14,16 @@ export function TrendingChips({
   onSelect: (code: string) => void;
 }) {
   return (
-    <section className="flex flex-col gap-3 px-5">
+    <div className="flex flex-col gap-2.5">
       <div className="flex items-center gap-1.5">
         <span className="text-base leading-none" aria-hidden="true">
           🔥
         </span>
-        <h2 className="text-sm font-semibold">지금 많이 찾는 종목</h2>
+        <h3 className="text-[13px] font-semibold text-kb-cool-gray">
+          지금 많이 찾는 종목
+        </h3>
       </div>
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="flex flex-wrap gap-2">
         {items.map((t) => (
           <Chip
             key={t.stock.code}
@@ -32,6 +34,6 @@ export function TrendingChips({
           </Chip>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

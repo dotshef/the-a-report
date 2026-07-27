@@ -8,7 +8,8 @@ import { SITE_NAME } from "@/lib/site";
 
 // globals.css :root 토큰 미러 — 값이 바뀌면 여기도 함께 갱신한다.
 const T = {
-  gold: "#D4AF37",
+  brand: "#2E6B43", // --brand-primary (필드그린)
+  brandStrong: "#235238", // --brand-strong
   black: "#1E1E1E",
   white: "#FFFFFF",
   gray: "#A3A3A3",
@@ -103,11 +104,11 @@ export function renderLeadNotificationEmail({
   <tr>
     <td align="center" style="padding:32px 16px;">
       <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;max-width:480px;background-color:${T.white};border:1px solid ${T.border};border-radius:${T.radiusDefault};overflow:hidden;">
-        <!-- 브랜드 골드 액센트 바 -->
-        <tr><td style="height:4px;line-height:4px;font-size:0;background-color:${T.gold};">&nbsp;</td></tr>
+        <!-- 브랜드 그린 액센트 바 -->
+        <tr><td style="height:4px;line-height:4px;font-size:0;background-color:${T.brand};">&nbsp;</td></tr>
         <tr>
           <td style="padding:28px 24px 24px;">
-            <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.04em;color:${T.gold};">${esc(SITE_NAME)}</p>
+            <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.04em;color:${T.brandStrong};">${esc(SITE_NAME)}</p>
             <h1 style="margin:0 0 20px;font-size:20px;line-height:1.4;font-weight:700;color:${T.black};">${esc(headline)}</h1>
 
             <!-- 신청 내역 — fill 카드(16px radius) -->

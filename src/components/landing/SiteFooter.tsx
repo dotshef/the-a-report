@@ -2,7 +2,7 @@
 export function SiteFooter() {
   return (
     <footer className="mt-4 flex flex-col gap-3 px-5 text-xs leading-relaxed text-kb-gray">
-      <div className="rounded-[12px] bg-kb-fill p-4">
+      <div className="rounded-[12px] border border-kb-border bg-white/70 p-4">
         <p>
           <span className="font-semibold text-kb-black">[투자 유의사항]</span>{" "}
           본 서비스는 자본시장법에 따라 신고된 유사투자자문업자가 불특정 다수를

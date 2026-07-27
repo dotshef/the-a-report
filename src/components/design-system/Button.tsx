@@ -4,12 +4,13 @@ type Variant = "primary" | "secondary" | "outline" | "critical";
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-[12px] px-5 min-h-12 " +
-  "text-base font-semibold transition-opacity duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] " +
+  "text-base font-semibold transition-[opacity,background-color] duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] " +
   "active:opacity-85 disabled:opacity-100 disabled:cursor-default cursor-pointer select-none";
 
-// Yellow is product, not chrome. On yellow, text is ALWAYS #1E1E1E.
+// 포인트 컬러는 product, not chrome. 필드그린(#2E6B43)은 어두운 면이라 위에 올리는
+// 텍스트는 ALWAYS 화이트 (기존 옐로우 규칙 #1E1E1E는 대비가 안 나와 폐기).
 const variants: Record<Variant, string> = {
-  primary: "bg-kb-yellow text-kb-black",
+  primary: "bg-brand text-kb-white hover:bg-brand-dark",
   secondary: "bg-kb-black text-kb-white",
   outline: "bg-transparent text-kb-black border border-kb-light-gray",
   critical: "bg-kb-critical text-kb-white",

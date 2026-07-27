@@ -29,7 +29,7 @@ export function Card({
 export function Avatar({
   children,
   size = 40,
-  bg = "var(--kb-yellow)",
+  bg = "var(--brand-primary)",
 }: {
   children?: ReactNode;
   size?: number;
@@ -64,7 +64,7 @@ export function Chip({
         "border-2 transition-all duration-300 ease-out hover:-translate-y-0.5",
         active
           ? "border-kb-black bg-kb-black text-kb-white"
-          : "border-transparent bg-kb-fill text-kb-black hover:border-kb-gold hover:text-kb-gold",
+          : "border-transparent bg-kb-fill text-kb-black hover:border-brand hover:text-brand",
       ].join(" ")}
     >
       {children}

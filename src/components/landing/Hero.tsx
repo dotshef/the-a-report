@@ -1,28 +1,22 @@
-import { Avatar } from "@/components/design-system/primitives";
-import { Icon } from "@/components/design-system/Icon";
+import { SearchKeywordPill } from "@/components/landing/SearchKeywordPill";
 
-export function Hero() {
+export function Hero({ keyword }: { keyword?: string | null }) {
   return (
-    <header className="flex flex-col gap-4 px-5 pt-10 pb-0">
-      <div className="flex items-center gap-2">
-        <Avatar size={32}>
-          <Icon name="chart" size={18} color="var(--kb-black)" />
-        </Avatar>
-        <span className="text-sm font-semibold">오늘의 종목 리포트</span>
-      </div>
+    <section className="flex flex-col gap-4 px-5 pt-6 pb-0">
+      {/* 네이버 검색 유입일 때만 노출 — 키워드가 없으면 배지 자체가 없다 */}
+      {keyword ? <SearchKeywordPill keyword={keyword} /> : null}
 
-      <h1 className="text-[32px] font-extrabold leading-[1.2] tracking-[-0.02em]">
-        궁금한 그 종목,
+      <h1 className="text-[30px] font-extrabold leading-[1.28] tracking-[-0.02em]">
+        ‘<span className="text-brand">그 종목</span>’, 지금이 기회일까?
         <br />
-        <span className="bg-[linear-gradient(to_top,var(--kb-yellow-signal)_0,var(--kb-yellow-signal)_34%,transparent_34%)] px-0.5">
-          무료 분석 리포트
-        </span>
-        로 확인하세요
+        답은 <span className="text-brand">리포트</span> 안에 있습니다
       </h1>
 
-      <p className="text-base leading-relaxed text-kb-gray">
-        국내 상장 전 종목 검색 가능 · 선택 즉시 리포트 미리보기 제공
+      <p className="text-[13px] leading-relaxed text-kb-cool-gray">
+        <b className="font-semibold text-kb-black">지금 왜 이 자리인지</b>,{" "}
+        <b className="font-semibold text-kb-black">앞으로 어떻게 볼지</b> — 내
+        종목 리포트로 확인하세요.
       </p>
-    </header>
+    </section>
   );
 }

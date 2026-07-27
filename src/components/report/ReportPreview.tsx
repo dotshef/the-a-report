@@ -86,20 +86,20 @@ export function ReportPreview({ report }: { report: ReportData }) {
         </div>
       </Card>
 
-      {/* ── 리포트 하단: 분류/제목 + 마스킹 결론·분석 + 뉴스 ── */}
+      {/* ── 리포트 하단: 분류/제목 + 마스킹 결론·분석 ── */}
       {sections.map((s, i) => (
         <Card key={i} className="flex flex-col gap-3">
-          {/* 분류 뱃지 — 제목 위, 금색 텍스트, 배경/테두리 없음 */}
+          {/* 분류 뱃지 — 제목 위, 브랜드 강조 텍스트, 배경/테두리 없음 */}
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold text-kb-gold">{s.category}</span>
+            <span className="text-xs font-bold text-brand-strong">{s.category}</span>
             <h4 className="text-base font-semibold leading-snug">{s.title}</h4>
           </div>
 
           {/* 한 줄 결론 — 마스킹 (PRD L22) */}
           <div className="flex items-center gap-2">
             <span
-              className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold text-kb-black"
-              style={{ background: "var(--kb-yellow-signal)" }}
+              className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold text-kb-white"
+              style={{ background: "var(--brand-primary)" }}
             >
               한줄 결론
             </span>
@@ -124,23 +124,6 @@ export function ReportPreview({ report }: { report: ReportData }) {
               </div>
             </div>
           </div>
-
-          {/* 종목 뉴스 (PRD L18) */}
-          {s.news.length > 0 && (
-            <ul className="flex flex-col divide-y divide-kb-border">
-              {s.news.map((n, j) => (
-                <li key={j} className="flex items-center gap-2.5 py-2.5">
-                  <Icon name="news" size={16} color="var(--kb-gray)" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm">{n.title}</p>
-                    <p className="text-xs text-kb-gray">
-                      {n.source} · {n.date}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
         </Card>
       ))}
     </div>
