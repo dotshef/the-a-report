@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { pretendard } from "./fonts";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const title = "오늘의 종목 리포트 — 매일 무료로 받아보세요";
 const description =
   "코스피·코스닥 2,651개 종목의 주가와 AI 리포트를 검색하고, 매일 무료 리포트를 신청하세요.";
 
 export const metadata: Metadata = {
-  // 하위 페이지의 상대 canonical·og:url을 정식 도메인 기준으로 해석한다.
   metadataBase: new URL(SITE_URL),
   title: { default: title, template: `%s | ${SITE_NAME}` },
   description,
@@ -38,7 +38,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko" className={`${pretendard.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
