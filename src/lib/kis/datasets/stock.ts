@@ -2,7 +2,7 @@ import { db } from "@/lib/db/server";
 import { kisGet } from "../client";
 import { dedupeByKey, num, toDate, toTimestamp, type StockDataset } from "./shared";
 
-// PRD 축소: 종목당 quote(52주+산업) / daily(3개월 일봉) / news(뉴스) 3콜.
+// 종목당 quote(52주+산업) / daily(3개월 일봉) / news(뉴스) 3콜.
 
 function yyyymmdd(d: Date): string {
   return d.toISOString().slice(0, 10).replace(/-/g, "");
@@ -13,7 +13,7 @@ function recentRange(days: number): { from: string; to: string } {
   return { from: yyyymmdd(from), to: yyyymmdd(to) };
 }
 
-// ── quote: 현재가 → fundamental(52주) + stock.industry ──────────────────────
+// quote: 현재가 → fundamental(52주) + stock.industry
 const quote: StockDataset = {
   key: "quote",
   async run(code) {
@@ -38,7 +38,6 @@ const quote: StockDataset = {
       );
     if (fErr) throw new Error(`fundamental upsert: ${fErr.message}`);
 
-    // 같은 콜로 industry 편승 갱신
     if (o.bstp_kor_isnm) {
       await db().from("stock").update({ industry: o.bstp_kor_isnm }).eq("code", code);
     }
@@ -46,7 +45,7 @@ const quote: StockDataset = {
   },
 };
 
-// ── daily: 일봉 OHLCV → price_daily (최근 ~95일 = 3개월 유지) ────────────────
+// daily: 일봉 OHLCV → price_daily (최근 ~95일 = 3개월 유지)
 const daily: StockDataset = {
   key: "daily",
   async run(code) {
@@ -84,7 +83,7 @@ const daily: StockDataset = {
   },
 };
 
-// ── news: 종목 뉴스 → news (중복은 unique 흡수) ──────────────────────────────
+// news: 종목 뉴스 → news (중복은 unique 흡수)
 const news: StockDataset = {
   key: "news",
   async run(code) {

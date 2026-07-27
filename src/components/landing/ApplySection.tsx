@@ -15,7 +15,6 @@ export function ApplySection() {
       <div className="flex flex-col gap-4 rounded-[16px] border border-kb-border bg-kb-white p-5">
         <SectionHeading step={1}>리포트 받으실 정보</SectionHeading>
 
-        {/* 아래 ②에서 고른 종목을 신청 대상으로 확인시킨다 */}
         <p className="flex items-center gap-1.5 text-xs">
           {selected ? (
             <>

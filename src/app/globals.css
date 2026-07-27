@@ -1,18 +1,8 @@
 @import "tailwindcss";
 
-/* ============================================================
-   KakaoBank Design System tokens
-   Ported from: KakaoBank Design System/colors_and_type.css
-   Near-black: #1E1E1E.
-
-   ⚠️ 디자인 시스템 예외 — 포인트 컬러
-   KakaoBank DS의 골드/옐로우(#D4AF37, #FFE300) 대신 필드그린을 브랜드
-   포인트 컬러로 사용한다. 네이버 그린(#03C75A, 형광 계열)과 채도·명도를
-   확실히 구분해 파워링크 검수 오인을 피하려는 목적. 나머지 토큰(뉴트럴·
-   시멘틱·라운드·모션)은 DS를 그대로 따른다.
-   ============================================================ */
+/* 포인트 컬러로 필드그린을 쓴다. 네이버 그린(#03C75A, 형광 계열)과 채도·명도를
+   확실히 구분해 파워링크 검수 오인을 피하려는 목적. */
 :root {
-  /* Brand — 필드그린 (DS 예외) */
   --brand-primary: #2e6b43; /* 포인트 컬러 — 버튼/강조 면 */
   --brand-primary-dark: #1f4e30; /* hover·press·진한 면 */
   --brand-strong: #235238; /* 라벨·강조 텍스트 */
@@ -20,10 +10,8 @@
   --brand-surface: #eaf3ec; /* 라이트 배경 — 하이라이터/연한 면 */
   --brand-border: #cfe4d5; /* 브랜드 톤 보더 */
 
-  --kb-black: #1e1e1e; /* near-black — Kakao family */
+  --kb-black: #1e1e1e;
   --kb-white: #ffffff;
-
-  /* Neutrals */
   --kb-gray: #a3a3a3;
   --kb-light-gray: #cccccc;
   --kb-cool-gray: #888888;
@@ -31,24 +19,20 @@
   --kb-surface-subtle: #f9f9f9;
   --kb-border-subtle: #e6e6e6;
 
-  /* Semantic */
   --kb-critical: #e02000;
   --kb-positive: #0fbe6c;
   --kb-link-blue: #007aff;
   --kb-warning: #ff9800;
 
-  /* Price direction (KR convention: 상승=red, 하락=blue).
-     Separate tokens so we never repurpose --kb-critical(error)/--kb-link(link). */
+  /* 상승=red, 하락=blue (국내 관례). --kb-critical(에러)과 별도 토큰으로 둔다. */
   --price-up: #e02000;
   --price-down: #2e6bd6;
 
-  /* Foreground roles */
   --fg-1: var(--kb-black);
   --fg-2: var(--kb-gray);
   --fg-3: var(--kb-cool-gray);
   --fg-inverse: var(--kb-white);
 
-  /* Background roles */
   --bg-page: var(--kb-white);
   --bg-surface: var(--kb-white);
   --bg-fill: var(--kb-surface-fill);
@@ -58,32 +42,27 @@
      카드(흰 면)만 떠 보이도록 채도는 아주 낮게 유지. */
   --bg-backdrop: linear-gradient(180deg, #e4f0e8 0%, #f3f8f4 58%, #ecf4ee 100%);
 
-  /* Borders */
   --border-default: var(--kb-light-gray);
   --border-subtle: var(--kb-border-subtle);
   --overlay-scrim: rgba(0, 0, 0, 0.4);
 
-  /* Radius */
   --radius-tight: 8px;
   --radius-default: 12px;
   --radius-comfort: 16px;
   --radius-sheet: 20px;
   --radius-pill: 9999px;
 
-  /* Elevation */
   --shadow-0: none;
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-3: 0 -2px 16px rgba(0, 0, 0, 0.08);
 
-  /* Motion */
   --motion-fast: 150ms;
   --motion-standard: 250ms;
   --motion-success: 350ms;
   --motion-page: 300ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Layout */
   --content-max: 1360px;
   --mobile-gutter: 20px;
   --header-h: 62px;
@@ -134,7 +113,6 @@ body {
   background: var(--bg-backdrop) fixed;
 }
 
-/* Banking amounts — tabular figures */
 .amount {
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -146,7 +124,7 @@ body {
   color: var(--kb-positive);
 }
 
-/* Masking: blur the sensitive conclusion/analysis (PRD: 마스킹) */
+/* 결론·분석 본문을 신청 전까지 가린다 */
 .kb-mask {
   filter: blur(6px);
   user-select: none;

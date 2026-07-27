@@ -22,7 +22,7 @@ function parseKstTimestamp(value: string): Date {
   return new Date(`${trimmed}+09:00`);
 }
 
-// ── 발송 rate-limit 정책 (비용 폭탄 방지) ──────────────────────
+// 발송 rate-limit 정책 (비용 폭탄 방지)
 const SEND_WINDOW_MS = 60 * 60 * 1000;
 const SEND_MAX_IN_WINDOW = 5;
 const RESEND_COOLDOWN_MS = 30 * 1000;

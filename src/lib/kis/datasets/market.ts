@@ -7,7 +7,7 @@ function yyyymmdd(d: Date): string {
   return d.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
-// ── HTS 조회상위 (HHMCM000100C0) → 보통주 필터 후 원자 교체 ──────────────────
+// HTS 조회상위 (HHMCM000100C0) → 보통주 필터 후 원자 교체
 const topView: MarketDataset = {
   key: "top_view",
   async run() {
@@ -38,7 +38,6 @@ const topView: MarketDataset = {
       .map((code, i) => ({ rank: i + 1, code, fetched_at: now }));
     if (rows.length === 0) return "ok";
 
-    // 원자 교체: 전체 삭제 후 재삽입(단일 워커 cron)
     const { error: delErr } = await db().from("top_view").delete().gte("rank", 0);
     if (delErr) throw new Error(`top_view delete: ${delErr.message}`);
     const { error: insErr } = await db().from("top_view").insert(rows);
@@ -47,7 +46,7 @@ const topView: MarketDataset = {
   },
 };
 
-// ── top_opinions: top_view 후보 코드에 대해서만 투자의견 수집 → invest_opinion ─
+// top_opinions: top_view 후보 코드에 대해서만 투자의견 수집 → invest_opinion
 // (전 종목이 아니라 조회상위 종목만 → 야간 추가 콜 미미. 트렌딩 "투자의견 보유" 필터용)
 const topOpinions: MarketDataset = {
   key: "top_opinions",

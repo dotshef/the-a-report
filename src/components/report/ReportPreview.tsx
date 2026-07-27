@@ -30,9 +30,7 @@ export function ReportPreview({ report }: { report: ReportData }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ── 리포트 상단: 헤더 + 시세 + 차트 ── */}
       <Card className="!p-0 overflow-hidden">
-        {/* 헤더 — 기업 마크 없이 회사명만 (PRD L9) */}
         <div
           className="border-b border-kb-border p-5 text-kb-white"
           style={{ background: "#1a1f2e" }}
@@ -72,12 +70,10 @@ export function ReportPreview({ report }: { report: ReportData }) {
           </div>
         </div>
 
-        {/* 3개월 차트 */}
         <div className="px-3 pt-3">
           <PriceChart history={quote.history} up={up} />
         </div>
 
-        {/* 고가/저가/52주 */}
         <div className="grid grid-cols-4 gap-2 p-5 pt-3">
           <Stat label="고가" value={won(quote.high)} valueClassName="text-price-up" />
           <Stat label="저가" value={won(quote.low)} valueClassName="text-price-down" />
@@ -86,16 +82,13 @@ export function ReportPreview({ report }: { report: ReportData }) {
         </div>
       </Card>
 
-      {/* ── 리포트 하단: 분류/제목 + 마스킹 결론·분석 ── */}
       {sections.map((s, i) => (
         <Card key={i} className="flex flex-col gap-3">
-          {/* 분류 뱃지 — 제목 위, 브랜드 강조 텍스트, 배경/테두리 없음 */}
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-bold text-brand-strong">{s.category}</span>
             <h4 className="text-base font-semibold leading-snug">{s.title}</h4>
           </div>
 
-          {/* 한 줄 결론 — 마스킹 (PRD L22) */}
           <div className="flex items-center gap-2">
             <span
               className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold text-kb-white"
@@ -111,7 +104,6 @@ export function ReportPreview({ report }: { report: ReportData }) {
             </div>
           </div>
 
-          {/* 분석 결과 (요약) — 마스킹 (PRD L22) */}
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-semibold text-kb-gray">분석 결과 (요약)</span>
             <div className="relative overflow-hidden rounded-[12px] bg-kb-subtle p-4">

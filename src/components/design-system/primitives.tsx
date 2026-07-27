@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-// ----- Card: white surface, 12px radius, optional 1px #E6E6E6 border, no shadow -----
 export function Card({
   children,
   className = "",
@@ -25,7 +24,6 @@ export function Card({
   );
 }
 
-// ----- Avatar: rounded square (12px), never a circle -----
 export function Avatar({
   children,
   size = 40,
@@ -45,7 +43,6 @@ export function Avatar({
   );
 }
 
-// ----- Chip: 8px radius tight chip for trending stocks -----
 export function Chip({
   children,
   onClick,
@@ -72,7 +69,6 @@ export function Chip({
   );
 }
 
-// ----- StatusPill: 12% alpha of text colour -----
 export function StatusPill({
   children,
   tone = "positive",

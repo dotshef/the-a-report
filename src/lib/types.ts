@@ -3,23 +3,16 @@ import type { ReportCategory } from "@/data/report-titles";
 
 export interface StockQuote {
   code: string;
-  /** 현재가 */
   price: number;
-  /** 전일 대비 */
   change: number;
-  /** 등락률 (%) */
   changeRate: number;
-  /** 당일 고가 */
   high: number;
-  /** 당일 저가 */
   low: number;
-  /** 52주 최고 */
   high52w: number;
-  /** 52주 최저 */
   low52w: number;
-  /** 3개월 종가 시계열 (오름차순) */
+  /** 오름차순 */
   history: { date: string; close: number }[];
-  /** 시세 기준 거래일 (price_daily 최신 행의 date, 종가 기준). 빈 문자열=데이터 없음 */
+  /** price_daily 최신 행의 date(종가 기준). 빈 문자열=데이터 없음 */
   updatedAt: string;
 }
 
@@ -33,9 +26,9 @@ export interface NewsItem {
 export interface ReportSection {
   title: string;
   category: ReportCategory;
-  /** 한 줄 결론 — 마스킹 대상 */
+  /** 마스킹 대상 */
   conclusion: string;
-  /** 분석 결과 — 마스킹 대상 */
+  /** 마스킹 대상 */
   analysis: string;
   news: NewsItem[];
 }
@@ -48,18 +41,16 @@ export interface ReportData {
 
 export interface TrendingStock {
   stock: Stock;
-  /** 투자의견 (KIS: 매수/중립 등) */
+  /** KIS 원문: 매수/중립 등 */
   opinion: string;
   price: number;
 }
 
-/** 상단 시세 티커 한 칸 — top_view 종목의 종목명·종가·등락률 */
 export interface TickerItem {
   code: string;
   name: string;
-  /** 최신 종가 */
   price: number;
-  /** 전일 대비 등락률 (%) */
+  /** 전일 대비 (%) */
   changeRate: number;
 }
 

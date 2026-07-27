@@ -17,7 +17,6 @@ export function ReportSection() {
     <section className="flex flex-col gap-4 px-5">
       <SectionHeading step={2}>분석 리포트 선택 &amp; 미리보기</SectionHeading>
 
-      {/* 종목 선택 — 인기 칩 + 종목명/코드 검색 */}
       <div className="flex flex-col gap-4 rounded-[16px] border border-kb-border bg-kb-white p-5">
         <TrendingChips
           items={trending}

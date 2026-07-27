@@ -1,4 +1,4 @@
--- 0002_report_title.sql — 종목별 리포트 제목/분류 (뉴스 기반, 오프라인 1회 생성)
+-- 종목별 리포트 제목/분류 (뉴스 기반, 오프라인 1회 생성).
 -- 데이터 흐름: news 테이블 → (오프라인 AI 생성) → report_title.csv → 이 테이블로 임포트.
 -- 런타임에는 생성하지 않는다. loader가 이 테이블을 우선 읽고, 없으면 코드 폴백
 -- (src/data/report-titles.ts:generateTitles)으로 degrade.

@@ -4,9 +4,7 @@ import { Card } from "@/components/design-system/primitives";
 export function ReportSkeleton() {
   return (
     <div className="flex flex-col gap-4" aria-hidden>
-      {/* ── 상단: 헤더 + 차트 + 시세 통계 ── */}
       <Card className="!p-0 overflow-hidden">
-        {/* 헤더 */}
         <div className="flex flex-col gap-3 border-b border-kb-border p-5">
           <div className="flex items-baseline gap-2">
             <div className="kb-skeleton h-6 w-28" />
@@ -22,12 +20,10 @@ export function ReportSkeleton() {
           </div>
         </div>
 
-        {/* 차트 자리 */}
         <div className="px-3 pt-3">
           <div className="kb-skeleton h-40 w-full !rounded-[12px]" />
         </div>
 
-        {/* 고가/저가/52주 */}
         <div className="grid grid-cols-4 gap-2 p-5 pt-3">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex flex-col gap-1.5">
@@ -38,7 +34,6 @@ export function ReportSkeleton() {
         </div>
       </Card>
 
-      {/* ── 하단: 분류/제목 + 결론 + 분석 ── */}
       <Card className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
           <div className="kb-skeleton h-3 w-16" />

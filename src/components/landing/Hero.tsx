@@ -3,7 +3,6 @@ import { SearchKeywordPill } from "@/components/landing/SearchKeywordPill";
 export function Hero({ keyword }: { keyword?: string | null }) {
   return (
     <section className="flex flex-col gap-4 px-5 pt-6 pb-0">
-      {/* 네이버 검색 유입일 때만 노출 — 키워드가 없으면 배지 자체가 없다 */}
       {keyword ? <SearchKeywordPill keyword={keyword} /> : null}
 
       <h1 className="text-[30px] font-extrabold leading-[1.28] tracking-[-0.02em]">

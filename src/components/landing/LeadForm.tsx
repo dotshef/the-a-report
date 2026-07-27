@@ -154,7 +154,7 @@ function DoneMessage({ message }: { message: string }) {
   );
 }
 
-// 신청 폼 (PRD L3) — 이름 + 휴대폰 인증(egress gateway SMS) 후 리드 저장.
+// 이름 + 휴대폰 인증(egress gateway SMS) 후 리드 저장.
 // embedded=true 이면 랜딩 ① 섹션 카드 안에 필드만 렌더한다(헤더·카드·제목 없음).
 export function LeadForm({
   selectedCode,
@@ -267,7 +267,6 @@ export function LeadForm({
           />
         </div>
 
-        {/* 전화번호 + 인증번호 받기 */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="lead-phone" className="text-sm font-semibold">
             전화번호
@@ -299,7 +298,6 @@ export function LeadForm({
           </div>
         </div>
 
-        {/* 인증번호 입력 + 확인 */}
         {step !== "idle" && (
           <div className="flex gap-2">
             <input
@@ -333,7 +331,6 @@ export function LeadForm({
         {smsMsg && <p className="text-sm text-kb-critical">{smsMsg}</p>}
       </div>
 
-      {/* 최종 제출 — 인증 완료 시에만 활성화 */}
       <form ref={formRef} action={formAction} className="flex flex-col gap-3">
         <input type="hidden" name="name" value={name} />
         <input type="hidden" name="phone" value={phone} />
@@ -470,7 +467,6 @@ export function LeadForm({
             하세요
           </h2>
 
-          {/* 선택 종목 카드 (레퍼런스 STEP2 selected) */}
           {selectedName && (
             <div className="flex items-center gap-3 rounded-[12px] border border-kb-border bg-kb-white p-3">
               <div className="flex flex-col">

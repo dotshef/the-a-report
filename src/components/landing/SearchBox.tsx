@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { type Stock, marketLabel } from "@/data/stock";
 import { Icon } from "@/components/design-system/Icon";
 
-// 검색창 — 입력 시 종목 후보를 드롭다운으로 노출, 선택 시 리포트 렌더 (PRD L6).
 export function SearchBox({ onSelect }: { onSelect: (stock: Stock) => void }) {
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Stock[]>([]);

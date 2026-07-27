@@ -15,7 +15,7 @@ function secret(): string {
   return value;
 }
 
-/** 6자리 랜덤 인증번호 (앞자리 0 허용) */
+/** 앞자리 0 허용 */
 export function generateCode(): string {
   return String(Math.floor(Math.random() * 1_000_000)).padStart(6, "0");
 }
@@ -25,7 +25,6 @@ export function hashCode(phone: string, code: string): string {
   return createHmac("sha256", secret()).update(`${phone}|${code}`).digest("base64url");
 }
 
-/** 타이밍 세이프 해시 비교 */
 export function hashEqual(a: string, b: string): boolean {
   const ba = Buffer.from(a);
   const bb = Buffer.from(b);

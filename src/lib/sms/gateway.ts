@@ -1,11 +1,10 @@
 export interface SendSmsInput {
-  /** 수신자 전화번호 (- 없이 숫자만) */
+  /** - 없이 숫자만 */
   receiver: string;
-  /** 메시지 내용 */
   msg: string;
-  /** SMS/LMS/MMS 지정 (미지정 시 게이트웨이가 자동 판별) */
+  /** 미지정 시 게이트웨이가 자동 판별 */
   msgType?: "SMS" | "LMS" | "MMS";
-  /** LMS/MMS 제목 */
+  /** LMS/MMS 전용 */
   title?: string;
 }
 
@@ -16,11 +15,7 @@ export interface SendSmsResult {
   msgId?: number;
 }
 
-/**
- * Egress Gateway를 통해 SMS를 발송한다.
- * 필요한 환경변수: EGRESS_GATEWAY_URL, EGRESS_GATEWAY_KEY
- * 실제 SMS 사업자 호출과 크리덴셜 관리는 게이트웨이가 담당한다.
- */
+// 실제 SMS 사업자 호출과 크리덴셜 관리는 게이트웨이가 담당한다.
 export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
   const url = process.env.EGRESS_GATEWAY_URL;
   const key = process.env.EGRESS_GATEWAY_KEY;

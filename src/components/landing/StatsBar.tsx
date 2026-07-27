@@ -1,11 +1,9 @@
 import type { LandingStats } from "@/lib/stats";
 import { won } from "@/lib/format";
 
-// 오늘 신청자(사회적 증거) + 이번 주 무료 발송 잔여. 사실 기반 수치만 노출한다.
 export function StatsBar({ stats }: { stats: LandingStats }) {
   return (
     <div className="px-5">
-      {/* 그린 히어로 밴드 위에 얹히므로 회색 fill 대신 흰 면 + 브랜드 보더 */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[16px] border border-brand-border bg-kb-white px-4 py-3.5 text-sm">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-kb-positive opacity-60" />

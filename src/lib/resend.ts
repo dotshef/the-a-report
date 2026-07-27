@@ -1,5 +1,4 @@
-// Resend — lead notification email. https://resend.com/docs/send-with-nextjs
-// Degrades to a no-op (log only) when RESEND_API_KEY is absent.
+// 리드 알림 메일 발송(Resend). RESEND_API_KEY가 없으면 로그만 남기고 넘어간다.
 // 제목·본문 마크업은 components/email/LeadNotificationEmail.ts가 담당한다.
 
 import {
@@ -15,7 +14,6 @@ const NOTIFY = process.env.EMAIL_TO;
 
 export const resendConfigured = Boolean(API_KEY && NOTIFY);
 
-/** 신규 리드 알림 메일 발송. 표시 항목은 템플릿(LeadNotificationEmailProps)이 정의한다. */
 export async function sendLeadEmail(
   params: LeadNotificationEmailProps,
 ): Promise<{ ok: boolean }> {

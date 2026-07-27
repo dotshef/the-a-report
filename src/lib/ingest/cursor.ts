@@ -15,7 +15,6 @@ function freshSince(): string {
 export async function selectStaleStocks(limit: number): Promise<string[]> {
   const since = freshSince();
 
-  // 오늘 완료(_all_)된 종목 집합 (페이지네이션)
   const freshSet = new Set<string>();
   for (let from = 0; ; from += PAGE) {
     const { data } = await db()
@@ -30,7 +29,6 @@ export async function selectStaleStocks(limit: number): Promise<string[]> {
     if (rows.length < PAGE) break;
   }
 
-  // 전 주권(ST) 코드를 순회 → 미완료만 limit개 수집(조기 종료)
   const stale: string[] = [];
   for (let from = 0; ; from += PAGE) {
     const { data } = await db()

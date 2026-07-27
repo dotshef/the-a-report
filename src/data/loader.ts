@@ -39,7 +39,7 @@ function isReportCategory(value: unknown): value is ReportCategory {
   return typeof value === "string" && REPORT_CATEGORIES.has(value as ReportCategory);
 }
 
-// ── 종목 검색: stock(ST) 이름/코드 매칭. 요청 경로는 DB만 읽음(미설정 시 빈 배열). ──
+// 종목 검색: stock(ST) 이름/코드 매칭. 요청 경로는 DB만 읽음(미설정 시 빈 배열).
 export async function searchStocks(query: string, limit = 8): Promise<Stock[]> {
   if (!dbConfigured) return [];
   const q = query.trim().replace(/[,%_()]/g, "");
@@ -60,7 +60,7 @@ export async function searchStocks(query: string, limit = 8): Promise<Stock[]> {
   }));
 }
 
-// ── 리포트 미리보기: price_daily(3개월)·fundamental(52주)·news·stock 조인. ──
+// 리포트 미리보기: price_daily(3개월)·fundamental(52주)·news·stock 조인.
 export async function getReport(code: string): Promise<ReportData | null> {
   if (!dbConfigured) return null;
   const supabase = db();
@@ -98,7 +98,7 @@ export async function getReport(code: string): Promise<ReportData | null> {
     industry: (stockRow.industry as string) ?? undefined,
   };
 
-  const priceAsc = (priceR.data ?? []).slice().reverse(); // 시간순
+  const priceAsc = (priceR.data ?? []).slice().reverse();
   const closes = priceAsc.map((r) => n(r.close));
   const latest = priceAsc[priceAsc.length - 1];
   const current = latest ? n(latest.close) : 0;
@@ -153,7 +153,7 @@ export async function getReport(code: string): Promise<ReportData | null> {
   return { stock, quote, sections };
 }
 
-// ── 상단 시세 티커: top_view 상위 N의 종목명 + 최신 종가 + 전일 대비 등락률. ──
+// 상단 시세 티커: top_view 상위 N의 종목명 + 최신 종가 + 전일 대비 등락률.
 // 리포트 미리보기(getReport)와 같은 소스(price_daily 최신 2개 종가)로 등락률을 계산한다.
 // price_daily는 장 마감 후 수집(cron 22:00 KST)이므로 항상 '확정 종가' 기준이고,
 // 장중에는 갱신되지 않는다 → asOf(기준 거래일)를 함께 돌려 화면에 표기한다.
@@ -206,7 +206,7 @@ export async function getTicker(limit = 12): Promise<TickerData> {
   return { items, asOf };
 }
 
-// ── 지금 많이 찾는 종목: top_view 상위 10 중 투자의견 보유 종목만 최대 N. ──
+// 지금 많이 찾는 종목: top_view 상위 10 중 투자의견 보유 종목만 최대 N.
 export async function getTrending(limit = 8): Promise<TrendingStock[]> {
   if (!dbConfigured) return [];
   const supabase = db();
@@ -219,7 +219,6 @@ export async function getTrending(limit = 8): Promise<TrendingStock[]> {
   const codes = (tv ?? []).map((r) => r.code as string);
   if (codes.length === 0) return [];
 
-  // 투자의견 보유 여부 + 최신 의견
   const { data: ops } = await supabase
     .from("invest_opinion")
     .select("code, opinion, opinion_date")

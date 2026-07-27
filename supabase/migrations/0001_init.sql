@@ -1,8 +1,6 @@
--- 0001_init.sql — 초기 스키마 (docs/implementation-plan.md 기준)
+-- 초기 스키마.
 -- 데이터 흐름: KIS → Vercel Cron(ingest) → Supabase → 클라이언트(항상 DB만 읽음)
 -- 접근 제어: 서버 서비스롤 전용. RLS 미사용(v1). kis_token은 시크릿.
-
--- ─── 수집 인프라 ────────────────────────────────────────────────────────────
 
 -- 토큰 캐시(단일 행). cron 여러 invocation이 재사용 → 발급 "1분1회" 제한 회피.
 create table if not exists kis_token (
@@ -31,8 +29,6 @@ create table if not exists cron_lock (
   expires_at timestamptz not null
 );
 
--- ─── 종목 디멘션 (사용자 직접 적재) ─────────────────────────────────────────
-
 -- market 'K'=KOSPI 'Q'=KOSDAQ, group_code 'ST'=주권.
 -- 보통주 일반종목 판정(주권 & 코드 끝자리 '0')은 DB가 아니라 앱(서버 로직)이 소유한다:
 -- src/data/stock.ts:isCommonStock(). DB는 원천 컬럼만 저장(파생 컬럼 없음).
@@ -44,8 +40,6 @@ create table if not exists stock (
   industry   text                            -- quote 콜에 편승해 야간 갱신
 );
 create index if not exists stock_group_code_idx on stock (group_code);
-
--- ─── 팩트 ───────────────────────────────────────────────────────────────────
 
 -- 일봉 3개월(차트 + 현재가/전일대비/당일 고저 파생). "현재가"=최신 행 close.
 create table if not exists price_daily (
@@ -93,8 +87,6 @@ create table if not exists invest_opinion (
   primary key (code, opinion_date, firm)
 );
 create index if not exists invest_opinion_code_date_idx on invest_opinion (code, opinion_date desc);
-
--- ─── 리드 (KST 타임존) ──────────────────────────────────────────────────────
 
 -- 리포트 신청 기록(리드) + 유입/광고 트래킹.
 create table if not exists report_request (

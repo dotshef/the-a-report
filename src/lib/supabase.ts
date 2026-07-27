@@ -4,7 +4,6 @@
 import { db, dbConfigured } from "@/lib/db/server";
 import { SITE_URL } from "@/lib/site";
 
-// ---------- report_request (리드) ----------
 export interface ReportRequestInput {
   name: string;
   phone: string;

@@ -3,7 +3,6 @@
 import type { TrendingStock } from "@/lib/types";
 import { Chip } from "@/components/design-system/primitives";
 
-// 지금 많이 찾는 종목 — 투자의견 보유 종목 TOP 8 (PRD L5).
 export function TrendingChips({
   items,
   activeCode,

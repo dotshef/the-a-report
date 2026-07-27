@@ -1,14 +1,5 @@
-// Report titles + classification — EMBEDDED IN CODE, not stored in DB (PRD).
-//
-// PRD AI 작업:
-//  - 1차: 개발 시 멀티 에이전트로 2,651개사 × 2개 = 5,302개 제목을 "~일까?"
-//         의문문 형식으로 생성.
-//  - 2차: 제목을 기반으로 AI가 분류(category)를 판단하여 삽입.
-//
-// For this build the 5,302 titles are represented by a deterministic,
-// industry-aware generator (below). When the real AI-generated title set
-// is produced, replace `generateTitles` with a static lookup table keyed
-// by stock code — the ReportTitle shape stays identical.
+// 리포트 제목/분류의 코드 폴백. 정식 제목은 report_title 테이블에 있고
+// loader가 그쪽을 우선 읽는다 — 여기 생성기는 DB에 행이 없을 때만 쓰인다.
 
 export type ReportCategory =
   | "실적"
@@ -19,13 +10,11 @@ export type ReportCategory =
   | "리스크";
 
 export interface ReportTitle {
-  /** 리포트 제목 (의문문, "~일까?") */
+  /** "~일까?" 의문문 */
   title: string;
-  /** AI 분류 */
   category: ReportCategory;
 }
 
-// Industry → two question templates + their category.
 const TEMPLATES: Record<string, { title: (n: string) => string; category: ReportCategory }[]> = {
   반도체: [
     { title: (n) => `${n}, HBM 사이클의 최대 수혜주일까?`, category: "성장성" },
@@ -77,7 +66,6 @@ const TEMPLATES: Record<string, { title: (n: string) => string; category: Report
   ],
 };
 
-// Generic fallback templates keyed off any industry.
 function fallback(name: string, industry: string): ReportTitle[] {
   return [
     { title: `${name}, ${industry} 업황 반등의 수혜를 볼 수 있을까?`, category: "산업·정책" },
@@ -85,7 +73,6 @@ function fallback(name: string, industry: string): ReportTitle[] {
   ];
 }
 
-/** 종목당 2개의 리포트 제목 + 분류 반환. 종목의 name/industry로 생성. */
 export function generateTitles(stock: { name: string; industry?: string }): ReportTitle[] {
   const industry = stock.industry ?? "";
   const t = TEMPLATES[industry];

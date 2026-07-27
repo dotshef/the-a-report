@@ -1,8 +1,5 @@
 import localFont from "next/font/local";
 
-// Pretendard — KakaoBank Design System primary typeface.
-// Loaded via next/font/local for self-hosting + zero layout shift.
-// https://nextjs.org/docs/app/api-reference/components/font
 export const pretendard = localFont({
   src: [
     { path: "../../public/fonts/Pretendard-Regular.otf", weight: "400", style: "normal" },

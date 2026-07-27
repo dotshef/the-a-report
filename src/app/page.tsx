@@ -14,7 +14,7 @@ import {
   type SearchParamsInput,
 } from "@/lib/naver-keyword";
 
-// 세로로 긴 모바일 친화 랜딩 (PRD L2). 매 요청마다 시세/통계 갱신.
+// 매 요청마다 시세/통계 갱신.
 export const dynamic = "force-dynamic";
 
 export default async function Home({
@@ -34,10 +34,7 @@ export default async function Home({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      {/* 시세 티커 — 헤더 위 전폭 바. top_view 종목의 주가/등락률이 좌로 흐른다 */}
       <MarketTicker data={ticker} />
-
-      {/* 헤더 바 — 뷰포트 전폭 (하단 고정바와 동일) */}
       <SiteHeader />
 
       {/* 배경은 body의 단일 그라데이션 하나만 쓴다 (섹션별 배경 없음) */}
@@ -45,12 +42,9 @@ export default async function Home({
         <Hero keyword={keyword} />
         <StatsBar stats={stats} />
 
-        {/* 인터랙티브 섹션 — 종목 선택 상태를 공유하는 클라이언트 경계 */}
         <SelectionProvider trending={trending}>
           <ApplySection />
           <ReportSection />
-
-          {/* 하단 고정바 — 선택 종목을 들고 리포트 신청 페이지로 이동 */}
           <StickyBar />
         </SelectionProvider>
 

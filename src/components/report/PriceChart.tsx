@@ -1,6 +1,3 @@
-// 3개월 주가 변화 라인 차트 — 경량 인라인 SVG (PRD L14).
-// 상승/하락에 따라 색이 바뀌며, 브랜드 옐로우는 상태색으로 쓰지 않는다.
-
 export function PriceChart({
   history,
   up,
