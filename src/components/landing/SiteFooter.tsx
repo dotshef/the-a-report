@@ -28,17 +28,8 @@ export function SiteFooter() {
           <span className="font-semibold text-kb-black">대표</span> 박지환
         </span>
         <span>
-          <span className="font-semibold text-kb-black">
-            유사투자자문업 신고
-          </span>{" "}
-          [제0000-00호]
-        </span>
-        <span>
           <span className="font-semibold text-kb-black">사업자</span>{" "}
           [000-00-00000]
-        </span>
-        <span>
-          <span className="font-semibold text-kb-black">문의</span> 1544-0705
         </span>
       </div>
     </footer>
