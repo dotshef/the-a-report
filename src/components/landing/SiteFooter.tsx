@@ -29,7 +29,7 @@ export function SiteFooter() {
         </span>
         <span>
           <span className="font-semibold text-kb-black">사업자</span>{" "}
-          [000-00-00000]
+          508-12-63370
         </span>
       </div>
     </footer>

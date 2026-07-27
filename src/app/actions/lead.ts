@@ -32,21 +32,30 @@ export async function submitLead(
     return { ok: false, message: "휴대폰 인증을 먼저 완료해 주세요" };
   }
 
-  // 리포트 신청 기록 저장 (report_request) — 유입/광고 트래킹 포함
-  const saved = await insertReportRequest({
+  const field = (key: string) => String(formData.get(key) ?? "").trim() || undefined;
+
+  // 저장(report_request)과 알림 메일이 동일한 유입/광고 트래킹 값을 쓰도록 한 번만 조립한다.
+  const lead = {
     name,
     phone,
     interest,
-    trafficSource: String(formData.get("traffic_source") ?? "").trim() || undefined,
-    adKeyword: String(formData.get("ad_keyword") ?? "").trim() || undefined,
-    adCampaignId: String(formData.get("ad_campaign_id") ?? "").trim() || undefined,
-    adCampaignLabel: String(formData.get("ad_campaign_label") ?? "").trim() || undefined,
-    landingUrl: String(formData.get("landing_url") ?? "").trim() || undefined,
-  });
+    trafficSource: field("traffic_source"),
+    adKeyword: field("ad_keyword"),
+    adCampaignId: field("ad_campaign_id"),
+    adCampaignLabel: field("ad_campaign_label"),
+    landingUrl: field("landing_url"),
+  };
+
+  const saved = await insertReportRequest(lead);
   if (!saved.ok) return { ok: false, message: "잠시 후 다시 시도해 주세요" };
 
-  // 리드 알림 메일 (Resend)
-  await sendLeadEmail({ name, phone, interestedName: interest });
+  // 리드 알림 메일 (Resend) — 저장은 이미 끝났으므로 발송 실패가 접수를 막지 않는다.
+  try {
+    const mailed = await sendLeadEmail({ ...lead, interestedName: interest });
+    if (!mailed.ok) console.warn("[lead] saved but email not sent", phone);
+  } catch (e) {
+    console.error("[lead] email threw", e);
+  }
 
   return {
     ok: true,
