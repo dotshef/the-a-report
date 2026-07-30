@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sendSms } from "@/lib/sms/gateway";
 import { CODE_TTL_MS, generateCode } from "@/lib/sms/verification";
 import { checkSendRateLimit, createVerification } from "@/lib/sms/verificationStore";
+import { isBlockedUserAgent } from "@/lib/sms/blockedUserAgents";
 import { normalizePhone } from "@/lib/phone";
 
 export const runtime = "nodejs";
@@ -33,6 +34,16 @@ export async function POST(req: Request) {
   const phone = normalizePhone(normalize(body.phone));
   if (!name) return NextResponse.json({ error: "이름을 입력해주세요." }, { status: 400 });
   if (!phone) return NextResponse.json({ error: "올바른 연락처를 입력해주세요." }, { status: 400 });
+
+  // SMS 펌핑 공격 UA 차단 — 발송 비용이 발생하는 모든 처리보다 앞에 둔다
+  if (isBlockedUserAgent(userAgent)) {
+    // UA 원문을 반드시 남긴다 — 다음 로테이션을 추적하는 유일한 단서
+    console.warn(`[sms/send-code] ua-blocked | ip=${ip} | phone=${phone} | ua=${userAgent}`);
+    return NextResponse.json(
+      { error: "보안 정책에 따라 차단되었습니다. 다른 브라우저로 시도해주세요." },
+      { status: 403 },
+    );
+  }
 
   // 발송 남용 차단 (쿨다운 / 시간당 한도)
   let gate;
