@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { pretendard } from "./fonts";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { TrackingCapture } from "@/components/tracking/TrackingCapture";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -41,6 +42,7 @@ export default function RootLayout({
     <html lang="ko" className={`${pretendard.variable} h-full antialiased`}>
       <body className="min-h-full">
         {children}
+        <TrackingCapture />
         <Analytics />
         {/* AceCounter Gathering Script V.9.0.2025011001 */}
         <Script id="acecounter" strategy="afterInteractive">{`

@@ -10,6 +10,7 @@ import { insertReportRequest } from "@/lib/supabase";
 import { isPhoneVerified } from "@/lib/sms/verificationStore";
 import { sendLeadEmail } from "@/lib/resend";
 import { normalizePhone } from "@/lib/phone";
+import { isolateBySource, normalizeTrafficSource } from "@/lib/tracking";
 import {
   COMPLETE_PATH,
   LEAD_DONE_MESSAGE,
@@ -39,18 +40,31 @@ export async function submitLead(
     return { ok: false, message: "휴대폰 인증을 먼저 완료해 주세요" };
   }
 
-  const field = (key: string) => String(formData.get(key) ?? "").trim() || undefined;
+  const field = (key: string) => String(formData.get(key) ?? "").trim();
+
+  // 광고 유입 정보 서버 재정규화 — 폼 payload는 위조 가능하므로 클라이언트 판정을
+  // 그대로 믿지 않는다. 매체를 화이트리스트로 좁힌 뒤, 매체와 모순되는 필드는 버린다.
+  // (docs/광고-유입-정보-수집-전략.md)
+  const attribution = isolateBySource(
+    normalizeTrafficSource(field("traffic_source")),
+    {
+      ad_keyword: field("ad_keyword"),
+      ad_campaign_id: field("ad_campaign_id"),
+      ad_campaign_label: field("ad_campaign_label"),
+      landing_url: field("landing_url"),
+    },
+  );
 
   // 저장(report_request)과 알림 메일이 동일한 유입/광고 트래킹 값을 쓰도록 한 번만 조립한다.
   const lead = {
     name,
     phone,
     interest,
-    trafficSource: field("traffic_source"),
-    adKeyword: field("ad_keyword"),
-    adCampaignId: field("ad_campaign_id"),
-    adCampaignLabel: field("ad_campaign_label"),
-    landingUrl: field("landing_url"),
+    trafficSource: attribution.traffic_source,
+    adKeyword: attribution.ad_keyword || undefined,
+    adCampaignId: attribution.ad_campaign_id || undefined,
+    adCampaignLabel: attribution.ad_campaign_label || undefined,
+    landingUrl: attribution.landing_url || undefined,
   };
 
   const saved = await insertReportRequest(lead);

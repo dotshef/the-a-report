@@ -5,6 +5,11 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { submitLead, type LeadState } from "@/app/actions/lead";
 import { formatPhone } from "@/lib/phone";
+import {
+  captureAdAttribution,
+  readAdAttribution,
+  TRACKING_KEYS,
+} from "@/lib/tracking";
 import { Button } from "@/components/design-system/Button";
 import { Icon } from "@/components/design-system/Icon";
 import { Modal } from "@/components/design-system/Modal";
@@ -62,34 +67,6 @@ function MarketingConsentDetail() {
       </div>
     </div>
   );
-}
-
-interface Tracking {
-  traffic_source: string;
-  ad_keyword: string;
-  ad_campaign_id: string;
-  ad_campaign_label: string;
-  landing_url: string;
-}
-
-// 유입/광고 파라미터를 URL·referrer에서 수집 (report_request 트래킹 컬럼).
-function readTracking(): Tracking {
-  const p = new URLSearchParams(window.location.search);
-  let source = p.get("utm_source") ?? "";
-  if (!source && document.referrer) {
-    try {
-      source = new global.URL(document.referrer).hostname;
-    } catch {
-      source = "";
-    }
-  }
-  return {
-    traffic_source: source || "unknown",
-    ad_keyword: p.get("utm_term") ?? p.get("keyword") ?? "",
-    ad_campaign_id: p.get("utm_campaign") ?? p.get("campaign_id") ?? "",
-    ad_campaign_label: p.get("utm_content") ?? p.get("campaign") ?? "",
-    landing_url: window.location.href,
-  };
 }
 
 const inputCls =
@@ -200,10 +177,14 @@ export function LeadForm({
     const form = formRef.current;
     if (!form) return;
 
-    const tracking = readTracking();
-    for (const name of Object.keys(tracking) as (keyof Tracking)[]) {
+    // 자식 effect가 layout(TrackingCapture)보다 먼저 도는 React 순서 때문에,
+    // 광고 링크로 이 폼이 있는 페이지에 바로 떨어진 경우를 위해 여기서도 캡처한다.
+    captureAdAttribution();
+
+    const attribution = readAdAttribution();
+    for (const name of TRACKING_KEYS) {
       const field = form.elements.namedItem(name);
-      if (field instanceof HTMLInputElement) field.value = tracking[name];
+      if (field instanceof HTMLInputElement) field.value = attribution[name];
     }
   }, []);
 
