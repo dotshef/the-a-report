@@ -95,11 +95,21 @@ function readTracking(): Tracking {
 const inputCls =
   "min-h-12 w-full rounded-[12px] border border-kb-light-gray bg-white px-4 text-base outline-none focus:border-[1.5px] focus:border-kb-black";
 
-function SubmitButton({ canSubmit }: { canSubmit: boolean }) {
+// redirecting: 접수는 끝났고 완료 페이지 로딩만 남은 구간.
+// useFormStatus의 pending은 액션이 끝나는 즉시 false가 되므로, 이 구간까지
+// 버튼을 눌린 상태로 잡아두지 않으면 완료 화면이 깜빡이거나 재제출이 가능해진다.
+function SubmitButton({
+  canSubmit,
+  redirecting,
+}: {
+  canSubmit: boolean;
+  redirecting: boolean;
+}) {
   const { pending } = useFormStatus();
+  const busy = pending || redirecting;
   return (
-    <Button type="submit" fullWidth disabled={pending || !canSubmit}>
-      {pending ? "신청 중…" : "지금 무료로 리포트 받기 →"}
+    <Button type="submit" fullWidth disabled={busy || !canSubmit}>
+      {busy ? "신청 중…" : "지금 무료로 리포트 받기 →"}
     </Button>
   );
 }
@@ -166,13 +176,25 @@ export function LeadForm({
     null,
   );
 
+  const [navBlocked, setNavBlocked] = useState(false);
+
   // 접수 성공 → 완료 페이지로 하드 내비게이션.
   // router.push(soft navigation)는 문서를 새로 로드하지 않아 layout의 광고 추적
   // 스크립트가 재실행되지 않는다 — 완료 URL 페이지뷰가 매체에 잡히지 않으므로
   // location.replace로 전체 로드시킨다(replace: 뒤로가기 시 폼 재제출 방지).
   useEffect(() => {
-    if (state.ok && state.redirectTo) window.location.replace(state.redirectTo);
+    if (!state.ok || !state.redirectTo) return;
+    window.location.replace(state.redirectTo);
+
+    // 이동이 끝내 일어나지 않는 환경(구형 인앱 웹뷰 등)에서 폼이 멈춘 것처럼
+    // 보이지 않도록, 일정 시간 뒤에만 인라인 완료 안내로 폴백한다.
+    const timer = setTimeout(() => setNavBlocked(true), 5000);
+    return () => clearTimeout(timer);
   }, [state]);
+
+  // 이동 대기 중에는 완료 화면을 미리 보여주지 않는다 — 문서가 교체되기 전
+  // 잠깐 노출되면 완료 화면이 두 번 스쳐 지나가는 것처럼 보인다.
+  const redirecting = state.ok && Boolean(state.redirectTo) && !navBlocked;
 
   useEffect(() => {
     const form = formRef.current;
@@ -231,9 +253,8 @@ export function LeadForm({
     }
   }
 
-  // 완료 페이지로 이동하기 직전 화면. 내비게이션이 막히는 환경에서도
-  // 사용자는 접수 완료를 확인할 수 있다(폴백).
-  if (state.ok) {
+  // 폴백 전용 화면 — 완료 페이지 이동이 막힌 경우에만 도달한다.
+  if (state.ok && !redirecting) {
     if (embedded) return <DoneMessage message={state.message} />;
     return (
       <>
@@ -416,7 +437,10 @@ export function LeadForm({
         {state.message && !state.ok && (
           <p className="text-sm text-kb-critical">{state.message}</p>
         )}
-        <SubmitButton canSubmit={verified && agreePrivacy} />
+        <SubmitButton
+          canSubmit={verified && agreePrivacy}
+          redirecting={redirecting}
+        />
         <SubmitNote />
       </form>
     </>
