@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { DoneMessage } from "@/components/landing/DoneMessage";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { ConversionScripts } from "@/components/tracking/ConversionScripts";
-import { LEAD_DONE_MESSAGE, readLeadCompleteCookie } from "@/lib/lead-complete";
+import { LEAD_DONE_MESSAGE, readLeadCompletePass } from "@/lib/lead-complete";
 
 // 리포트 신청 완료 페이지 — 광고 매체 전환 URL(정확일치 /request/complete).
 // 쿠키를 읽으므로 항상 동적 렌더.
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function RequestCompletePage() {
-  const done = await readLeadCompleteCookie();
-  // 통과권이 없으면 정상 접수 경로가 아니다 — 추적 스크립트가 실행될 기회를 주지 않는다.
+  // 통과권 검사는 proxy.ts가 먼저 수행한다. 여기서는 proxy가 없는 환경까지 대비한 2차 방어.
+  const done = await readLeadCompletePass();
   if (!done) redirect("/");
 
   return (
