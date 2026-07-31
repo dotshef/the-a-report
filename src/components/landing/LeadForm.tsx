@@ -8,6 +8,7 @@ import { formatPhone } from "@/lib/phone";
 import { Button } from "@/components/design-system/Button";
 import { Icon } from "@/components/design-system/Icon";
 import { Modal } from "@/components/design-system/Modal";
+import { DoneMessage } from "./DoneMessage";
 
 const initial: LeadState = { ok: false, message: "" };
 
@@ -139,21 +140,6 @@ function BackHeader() {
   );
 }
 
-// 신청 완료 안내 — 폼 자리에 그대로 치환된다.
-function DoneMessage({ message }: { message: string }) {
-  return (
-    <div className="flex flex-col items-center gap-3 rounded-[16px] bg-kb-fill p-8 text-center">
-      <div
-        className="flex h-14 w-14 items-center justify-center rounded-[16px]"
-        style={{ background: "rgba(15,190,108,0.12)" }}
-      >
-        <Icon name="check" size={28} color="var(--kb-positive)" />
-      </div>
-      <p className="whitespace-pre-line text-base font-semibold">{message}</p>
-    </div>
-  );
-}
-
 // 이름 + 휴대폰 인증(egress gateway SMS) 후 리드 저장.
 // embedded=true 이면 랜딩 ① 섹션 카드 안에 필드만 렌더한다(헤더·카드·제목 없음).
 export function LeadForm({
@@ -179,6 +165,14 @@ export function LeadForm({
   const [openModal, setOpenModal] = useState<null | "privacy" | "marketing">(
     null,
   );
+
+  // 접수 성공 → 완료 페이지로 하드 내비게이션.
+  // router.push(soft navigation)는 문서를 새로 로드하지 않아 layout의 광고 추적
+  // 스크립트가 재실행되지 않는다 — 완료 URL 페이지뷰가 매체에 잡히지 않으므로
+  // location.replace로 전체 로드시킨다(replace: 뒤로가기 시 폼 재제출 방지).
+  useEffect(() => {
+    if (state.ok && state.redirectTo) window.location.replace(state.redirectTo);
+  }, [state]);
 
   useEffect(() => {
     const form = formRef.current;
@@ -237,6 +231,8 @@ export function LeadForm({
     }
   }
 
+  // 완료 페이지로 이동하기 직전 화면. 내비게이션이 막히는 환경에서도
+  // 사용자는 접수 완료를 확인할 수 있다(폴백).
   if (state.ok) {
     if (embedded) return <DoneMessage message={state.message} />;
     return (

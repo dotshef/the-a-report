@@ -10,10 +10,17 @@ import { insertReportRequest } from "@/lib/supabase";
 import { isPhoneVerified } from "@/lib/sms/verificationStore";
 import { sendLeadEmail } from "@/lib/resend";
 import { normalizePhone } from "@/lib/phone";
+import {
+  COMPLETE_PATH,
+  LEAD_DONE_MESSAGE,
+  setLeadCompleteCookie,
+} from "@/lib/lead-complete";
 
 export interface LeadState {
   ok: boolean;
   message: string;
+  // 접수 성공 시 이동할 완료 페이지 경로 (광고 전환 집계용 URL).
+  redirectTo?: string;
 }
 
 export async function submitLead(
@@ -57,8 +64,8 @@ export async function submitLead(
     console.error("[lead] email threw", e);
   }
 
-  return {
-    ok: true,
-    message: "신청이 완료되었습니다.\n담당자가 순차적으로 연락드릴 예정입니다.",
-  };
+  // 완료 페이지 1회 통과권 — 직접 URL 진입으로 허위 전환이 잡히는 것을 막는다.
+  await setLeadCompleteCookie({ interest });
+
+  return { ok: true, message: LEAD_DONE_MESSAGE, redirectTo: COMPLETE_PATH };
 }
