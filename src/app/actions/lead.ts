@@ -6,7 +6,7 @@
 // https://nextjs.org/docs/app/getting-started/updating-data
 
 import { dbConfigured } from "@/lib/db/server";
-import { insertReportRequest } from "@/lib/supabase";
+import { hasRecentDuplicateReportRequest, insertReportRequest } from "@/lib/supabase";
 import { isPhoneVerified } from "@/lib/sms/verificationStore";
 import { sendLeadEmail } from "@/lib/resend";
 import { normalizePhone } from "@/lib/phone";
@@ -66,6 +66,17 @@ export async function submitLead(
     adCampaignLabel: attribution.ad_campaign_label || undefined,
     landingUrl: attribution.landing_url || undefined,
   };
+
+  // 중복 접수 재검증 — 인증번호 발송 시점 체크 이후 제출까지의 시간차 동안 다른 요청이
+  // 먼저 접수됐을 가능성에 대비한다.
+  try {
+    if (dbConfigured && (await hasRecentDuplicateReportRequest(name, phone))) {
+      return { ok: false, message: "이미 접수된 이력이 있습니다." };
+    }
+  } catch (e) {
+    console.error("[lead] duplicate check failed", e);
+    return { ok: false, message: "잠시 후 다시 시도해 주세요" };
+  }
 
   const saved = await insertReportRequest(lead);
   if (!saved.ok) return { ok: false, message: "잠시 후 다시 시도해 주세요" };

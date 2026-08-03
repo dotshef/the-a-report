@@ -4,6 +4,7 @@ import { CODE_TTL_MS, generateCode } from "@/lib/sms/verification";
 import { checkSendRateLimit, createVerification } from "@/lib/sms/verificationStore";
 import { isBlockedUserAgent } from "@/lib/sms/blockedUserAgents";
 import { normalizePhone } from "@/lib/phone";
+import { hasRecentDuplicateReportRequest } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,6 +44,19 @@ export async function POST(req: Request) {
       { error: "보안 정책에 따라 차단되었습니다. 다른 브라우저로 시도해주세요." },
       { status: 403 },
     );
+  }
+
+  // 중복 접수 차단 — 이름+연락처 완전일치 + 최근 접수 이력 (선제 차단으로 불필요한 발송 비용 절감)
+  try {
+    if (await hasRecentDuplicateReportRequest(name, phone)) {
+      return NextResponse.json(
+        { error: "이미 접수된 이력이 있습니다." },
+        { status: 409 },
+      );
+    }
+  } catch (error) {
+    console.error("[sms/send-code] duplicate check failed:", error);
+    return NextResponse.json({ error: "잠시 후 다시 시도해주세요." }, { status: 500 });
   }
 
   // 발송 남용 차단 (쿨다운 / 시간당 한도)
