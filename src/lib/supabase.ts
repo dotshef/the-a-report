@@ -29,8 +29,9 @@ export async function insertReportRequest(
     ad_keyword: input.adKeyword ?? null,
     ad_campaign_id: input.adCampaignId ?? null,
     ad_campaign_label: input.adCampaignLabel ?? null,
-    // 광고 유입이 아닌 리드(traffic_source=unknown)는 landing_url을 남기지 않는다 —
-    // 유입 URL은 광고 파라미터 원본 보존용이라 자연/직접 유입에는 의미가 없다.
+    // landing_url은 traffic_source와 무관하게 항상 남긴다. 매체 판정에 실패한
+    // 유입(unknown)일수록 원본 URL이 필요하다 — 어떤 파라미터로 들어왔는지 확인해
+    // lib/tracking.ts의 판정 규칙을 넓히는 근거가 된다.
     landing_url: input.landingUrl ?? null,
   });
   return { ok: !error };
