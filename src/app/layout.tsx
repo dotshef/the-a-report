@@ -3,6 +3,7 @@ import Script from "next/script";
 import { pretendard } from "./fonts";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { TrackingCapture } from "@/components/tracking/TrackingCapture";
+import { NaverTracking } from "@/components/tracking/NaverTracking";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className="min-h-full">
         {children}
         <TrackingCapture />
+        <NaverTracking />
         <Analytics />
         {/* AceCounter Gathering Script V.9.0.2025011001 */}
         <Script id="acecounter" strategy="afterInteractive">{`
